@@ -21,14 +21,4 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-## Database Deploy
-
-```bash
-# Initailze
-$ npm run syncdb
-
-# migrate
-$ npm run migrate
-
-```
 
