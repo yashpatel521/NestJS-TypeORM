@@ -9,7 +9,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "../user/user.service";
-import { Public } from "../constants/constants";
+import { DATABSE_URL, Public } from "../constants/constants";
 import { fileUploadEnum, multerOptions } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
 import { RoleService } from "../role/role.service";
@@ -21,6 +21,15 @@ export class CommonController {
     private readonly userService: UserService,
     private readonly roleService: RoleService
   ) {}
+
+  @Public()
+  @Get()
+  serverStatus() {
+    return {
+      server: "Server is running",
+      database: DATABSE_URL,
+    };
+  }
 
   @Public()
   @Get("addAdminUser")

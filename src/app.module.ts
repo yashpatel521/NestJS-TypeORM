@@ -13,7 +13,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "./constants/constants";
 import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
-import { AppController } from "./app.controller";
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { AppController } from "./app.controller";
     UserModule,
     RoleModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
     {
       provide: APP_INTERCEPTOR,
