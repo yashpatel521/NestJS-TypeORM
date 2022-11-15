@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Query,
   UploadedFile,
@@ -11,11 +12,42 @@ import { UserService } from "../user/user.service";
 import { Public } from "../constants/constants";
 import { fileUploadEnum, multerOptions } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
+import { RoleService } from "../role/role.service";
 
 @ApiTags("Common")
 @Controller()
 export class CommonController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly roleService: RoleService
+  ) {}
+
+  @Public()
+  @Get("addAdminUser")
+  async addAdminUser() {
+    let adminRole = {
+      name: "admin",
+    };
+    let role = await this.roleService.findByName(adminRole.name);
+    if (!role) {
+      role = await this.roleService.create(adminRole);
+    }
+
+    let adminUser = {
+      name: "Admin",
+      email: "admin@admin.com",
+      password: "Admin@1234",
+      role,
+    };
+
+    let user = await this.userService.findByEmail(adminUser.email);
+
+    if (!user) {
+      user = await this.userService.create(adminUser);
+    }
+
+    return user;
+  }
 
   @Public()
   @UseInterceptors(FileInterceptor("file", multerOptions))

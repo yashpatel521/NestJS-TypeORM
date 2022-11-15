@@ -5,7 +5,7 @@ import {
   ErrorsInterceptor,
   TransformInterceptor,
   LoggingInterceptor,
-} from "./error/logging.interceptor";
+} from "./errorLogging/logging.interceptor";
 import { UserModule } from "./user/user.module";
 import { AuthModule } from "./auth/auth.module";
 import { JwtAuthGuard } from "./auth/jwt-auth.guard";
@@ -13,6 +13,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "./constants/constants";
 import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
+import { AppController } from "./app.controller";
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { CommonModule } from "./common/common.module";
     UserModule,
     RoleModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_INTERCEPTOR,

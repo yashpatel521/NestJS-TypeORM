@@ -4,7 +4,7 @@ import { existsSync, mkdirSync } from "fs";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { v4 as uuid } from "uuid";
-import { message } from "../error/errorMessage";
+import { message } from "../errorLogging/errorMessage";
 
 dotenv.config();
 const ENV = process.env;

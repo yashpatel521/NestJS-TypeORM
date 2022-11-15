@@ -13,6 +13,7 @@ export const TOKEN_SECRET = ENV.TOKEN_SECRET;
 export const TOKEN_EXPIRE = ENV.TOKEN_EXPIRE;
 export const REFRESH_TOKEN_SECRET = ENV.REFRESH_TOKEN_SECRET;
 export const REFRESH_TOKEN_EXPIRE = ENV.REFRESH_TOKEN_EXPIRE;
+export const SERVER_URL = `http://${ENV.SERVER}:${ENV.PORT}/`;
 
 let configDB = {
   type: ENV.DB_TYPE,
@@ -33,6 +34,8 @@ if (ENV.USE_DB === "LOCAL") {
     database: ENV.LOCAL_DB_NAME,
   };
 }
+
+export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
 
 type dbType = "mysql" | "postgres";
 

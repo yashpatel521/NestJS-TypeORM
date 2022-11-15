@@ -8,7 +8,7 @@ import {
   Patch,
   Delete,
 } from "@nestjs/common";
-import { message } from "../error/errorMessage";
+import { message } from "../errorLogging/errorMessage";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { userCreate, userList } from "../ApiResponsExample/user";

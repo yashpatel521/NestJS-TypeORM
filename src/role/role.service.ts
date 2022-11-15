@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Role } from "./entities/role.entity";
-import { message } from "../error/errorMessage";
+import { message } from "../errorLogging/errorMessage";
 
 @Injectable()
 export class RoleService {

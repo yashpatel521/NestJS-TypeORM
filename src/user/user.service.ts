@@ -3,7 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
-import { message } from "../error/errorMessage";
+import { message } from "../errorLogging/errorMessage";
+import { SERVER_URL } from "../constants/constants";
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,14 @@ export class UserService {
   ) {}
 
   async findAllUsers(): Promise<User[]> {
-    return await this.usersRepository.find();
+    let users = await this.usersRepository.find();
+    users = users.map((user) => {
+      return {
+        ...user,
+        profile: user.profile ? SERVER_URL + user.profile : null,
+      };
+    });
+    return users;
   }
 
   async create(user: DeepPartial<User>): Promise<User> {
@@ -21,27 +29,35 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async save(user: User): Promise<User> {
-    return await this.usersRepository.save(user);
+  async save(userUpdate: User): Promise<User> {
+    let user = await this.usersRepository.save(userUpdate);
+    user.profile = user.profile ? SERVER_URL + user.profile : null;
+    return user;
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOne({ where: { email } });
+    let user = await this.usersRepository.findOne({ where: { email } });
+    user.profile = user.profile ? SERVER_URL + user.profile : null;
+    return user;
   }
 
   async findByEmailOrThrow(email: string): Promise<User> {
     const user = await this.findByEmail(email);
     if (!user) throw new BadRequestException(message.emailExists);
+    user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 
   async findById(id: number): Promise<User> {
-    return await this.usersRepository.findOneBy({ id });
+    let user = await this.usersRepository.findOneBy({ id });
+    user.profile = user.profile ? SERVER_URL + user.profile : null;
+    return user;
   }
 
   async findByIdOrThrow(id: number): Promise<User> {
     const user = await this.findById(id);
     if (!user) throw new BadRequestException(message.userNotFound);
+    user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 
