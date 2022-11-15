@@ -25,7 +25,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("swagger", app, document, { customCss: swaggerCss });
+  SwaggerModule.setup("swagger", app, document, {
+    customCss: swaggerCss,
+    swaggerOptions: { tagsSorter: "alpha" },
+  });
 
   app.useStaticAssets(join(__dirname, "..", "public"), {
     index: false,
