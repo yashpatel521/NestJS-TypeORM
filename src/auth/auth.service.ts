@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import { TOKEN_SECRET, TOKEN_EXPIRE } from '../constants/constants';
+import { Injectable } from "@nestjs/common";
+import { UserService } from "../user/user.service";
+import * as bcrypt from "bcrypt";
+import { JwtService } from "@nestjs/jwt";
+import {
+  TOKEN_SECRET,
+  TOKEN_EXPIRE,
+  REFRESH_TOKEN_SECRET,
+  REFRESH_TOKEN_EXPIRE,
+} from "../constants/constants";
+import { User } from "../user/entities/user.entity";
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async validateUser(email: string, passwordTemp: string): Promise<any> {
@@ -34,6 +39,10 @@ export class AuthService {
         secret: TOKEN_SECRET,
         expiresIn: TOKEN_EXPIRE,
       }),
+      // refreshToken: this.jwtService.sign(payload, {
+      //   secret: REFRESH_TOKEN_SECRET,
+      //   expiresIn: REFRESH_TOKEN_EXPIRE,
+      // }),
     };
   }
 }
