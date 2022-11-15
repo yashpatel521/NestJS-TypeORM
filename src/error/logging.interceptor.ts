@@ -4,9 +4,9 @@ import {
   ExecutionContext,
   CallHandler,
   HttpException,
-} from '@nestjs/common';
-import { Observable, throwError, map, catchError, tap } from 'rxjs';
-import { logColor } from 'src/constants/constants';
+} from "@nestjs/common";
+import { Observable, throwError, map, catchError, tap } from "rxjs";
+import { logColor } from "../constants/constants";
 
 export interface Response<T> {
   data: T;
@@ -24,19 +24,19 @@ export class LoggingInterceptor implements NestInterceptor {
     const before = Date.now();
     let { method, path: url } = req;
     const { body, params, query } = req;
-    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.get('user-agent') || '';
+    let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const userAgent = req.get("user-agent") || "";
 
     method = this.setColor(method, logColor.BgRed);
     ip = this.setColor(ip, logColor.BgBlue);
     url = this.setColor(this.setColor(url, logColor.FgBlack), logColor.BgGreen);
 
     console.log(`REQUEST: ${ip} ` + `${method} path: ${url}`);
-    console.log('origin ', req.get('origin'));
-    console.log('BODY: ', body);
-    console.log('PARAM: ', params);
-    console.log('QUERY: ', query);
-    console.log('USER AGENET: ', userAgent);
+    console.log("origin ", req.get("origin"));
+    console.log("BODY: ", body);
+    console.log("PARAM: ", params);
+    console.log("QUERY: ", query);
+    console.log("USER AGENET: ", userAgent);
 
     return next.handle().pipe(
       tap((res) => {
@@ -44,13 +44,10 @@ export class LoggingInterceptor implements NestInterceptor {
         display ? console.log(res) : null;
         if (display) {
           console.log(
-            this.setColor(
-              `RESPONSE TIME:::${after - before}ms`,
-              logColor.BgRed,
-            ),
+            this.setColor(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed)
           );
         }
-      }),
+      })
     );
   }
 }
@@ -64,14 +61,14 @@ export class ErrorsInterceptor implements NestInterceptor {
         if (
           err.response &&
           err.response.message &&
-          typeof err.response.message == 'object' &&
+          typeof err.response.message == "object" &&
           err.response.message.length
         ) {
           message = err.response.message[0];
         } else if (
           err.response &&
           err.response.message &&
-          typeof err.response.message == 'string'
+          typeof err.response.message == "string"
         ) {
           message = err.response.message;
         }
@@ -84,10 +81,10 @@ export class ErrorsInterceptor implements NestInterceptor {
                 succuss: false,
                 message,
               },
-              200,
-            ),
+              200
+            )
         );
-      }),
+      })
     );
   }
 }
@@ -98,7 +95,7 @@ export class TransformInterceptor<T>
 {
   intercept(
     context: ExecutionContext,
-    next: CallHandler,
+    next: CallHandler
   ): Observable<Response<T>> {
     return next
       .handle()

@@ -6,19 +6,43 @@ import {
   Param,
   Body,
   Patch,
-} from '@nestjs/common';
-import { message } from '../error/errorMessage';
-import { UserService } from './user.service';
-import { ApiResponse } from '@nestjs/swagger';
-import { userCreate, userList } from '../ApiResponsExample/user';
-import { Public } from '../constants/constants';
-import { User } from './dto/user.entity';
-import { CreateUser, UpdateUser } from './dto/user.dto';
-import * as bcrypt from 'bcrypt';
+  Delete,
+} from "@nestjs/common";
+import { message } from "../error/errorMessage";
+import { UserService } from "./user.service";
+import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { userCreate, userList } from "../ApiResponsExample/user";
+import { deleteSuccess, Public } from "../constants/constants";
+import { User } from "./entities/user.entity";
+import * as bcrypt from "bcrypt";
+import { RoleService } from "../role/role.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
-@Controller('user')
+@ApiTags("User")
+@Controller("user")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly roleService: RoleService
+  ) {}
+
+  @Public()
+  @Post()
+  @ApiResponse({
+    status: 200,
+    schema: {
+      example: userCreate,
+    },
+  })
+  async createUser(@Body() userData: CreateUserDto): Promise<User> {
+    const userExits = await this.userService.findByEmail(userData.email);
+    if (userExits) {
+      throw new BadRequestException(message.emailExists);
+    }
+    const role = await this.roleService.findByNameOrThrow(userData.role);
+    return await this.userService.create({ ...userData, role });
+  }
 
   @Public()
   @ApiResponse({
@@ -32,47 +56,31 @@ export class UserController {
     return await this.userService.findAllUsers();
   }
 
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     schema: {
-      example: userList,
+      example: userCreate,
     },
   })
-  @Get(':id')
-  async getUserById(@Param('id') id: number): Promise<User[] | User> {
+  @Get(":id")
+  async getUserById(@Param("id") id: number): Promise<User[] | User> {
     return await this.userService.findById(+id);
   }
 
-  @Public()
-  @Post()
+  @ApiBearerAuth()
+  @Patch(":id")
   @ApiResponse({
     status: 200,
     schema: {
       example: userCreate,
     },
   })
-  async createUser(@Body() userData: CreateUser): Promise<User> {
-    const userExits = await this.userService.findByEmail(userData.email);
-    if (userExits) {
-      throw new BadRequestException(message.emailExists);
-    }
-    return await this.userService.create(userData);
-  }
-
-  @Patch()
-  @ApiResponse({
-    status: 200,
-    schema: {
-      example: userCreate,
-    },
-  })
-  async udateUser(@Body() userData: UpdateUser): Promise<User> {
-    console.log(userData.id);
-    const user = await this.userService.findById(userData.id);
-
-    if (!user) {
-      throw new BadRequestException(message.userNotFound);
-    }
+  async updateUser(
+    @Param("id") id: number,
+    @Body() userData: UpdateUserDto
+  ): Promise<User> {
+    const user = await this.userService.findByIdOrThrow(id);
 
     const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) {
@@ -88,5 +96,18 @@ export class UserController {
     }
 
     return await this.userService.save(user);
+  }
+
+  @ApiBearerAuth()
+  @Delete(":id")
+  @ApiResponse({
+    status: 200,
+    schema: {
+      example: deleteSuccess,
+    },
+  })
+  async deleteUser(@Param("id") id: number) {
+    await this.userService.findByIdOrThrow(id);
+    return await this.userService.delete(id);
   }
 }
