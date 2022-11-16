@@ -1,4 +1,5 @@
 export enum message {
+  tokenExpire = "Token got expire or token required",
   userNotFound = "user not found",
   passwordInvalid = "password is invalid",
   emailExists = "Email already exists",
