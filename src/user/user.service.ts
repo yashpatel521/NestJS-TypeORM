@@ -37,27 +37,25 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User> {
     let user = await this.usersRepository.findOne({ where: { email } });
-    user.profile = user.profile ? SERVER_URL + user.profile : null;
+    if (user) user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 
   async findByEmailOrThrow(email: string): Promise<User> {
     const user = await this.findByEmail(email);
     if (!user) throw new BadRequestException(message.emailExists);
-    user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 
   async findById(id: number): Promise<User> {
     let user = await this.usersRepository.findOneBy({ id });
-    user.profile = user.profile ? SERVER_URL + user.profile : null;
+    if (user) user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 
   async findByIdOrThrow(id: number): Promise<User> {
     const user = await this.findById(id);
     if (!user) throw new BadRequestException(message.userNotFound);
-    user.profile = user.profile ? SERVER_URL + user.profile : null;
     return user;
   }
 

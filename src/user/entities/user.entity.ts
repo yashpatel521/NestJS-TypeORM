@@ -21,7 +21,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ default: "public/user/default.png" })
   profile: string;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
