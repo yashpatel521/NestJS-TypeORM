@@ -6,7 +6,7 @@ import {
   HttpException,
 } from "@nestjs/common";
 import { Observable, throwError, map, catchError, tap } from "rxjs";
-import { config, logColor } from "../constants/constants";
+import { logColor, PrinLog } from "../constants/constants";
 
 export interface Response<T> {
   data: T;
@@ -14,12 +14,7 @@ export interface Response<T> {
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  setColor(string: string | string[] | undefined, color: string) {
-    return color + string + logColor.Reset;
-  }
-
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const display = config.logging;
     const req = context.getArgByIndex(1).req;
     const before = Date.now();
     let { method, path: url } = req;
@@ -27,24 +22,23 @@ export class LoggingInterceptor implements NestInterceptor {
     let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const userAgent = req.get("user-agent") || "";
 
-    method = this.setColor(method, logColor.BgRed);
-    ip = this.setColor(ip, logColor.BgBlue);
-    url = this.setColor(this.setColor(url, logColor.FgBlack), logColor.BgGreen);
-
-    console.log(`REQUEST: ${ip} ` + `${method} path: ${url}`);
-    console.log("origin ", req.get("origin"));
-    console.log("BODY: ", body);
-    console.log("PARAM: ", params);
-    console.log("QUERY: ", query);
-    console.log("USER AGENET: ", userAgent);
+    PrinLog(`REQUEST: ${ip} ` + `${method} path: ${url}`, logColor.BgBlue);
+    PrinLog(`"origin:`);
+    PrinLog(req.get("origin"));
+    PrinLog(`BODY:`);
+    PrinLog(body);
+    PrinLog(`PARAM:`);
+    PrinLog(params);
+    PrinLog(`QUERY:`);
+    PrinLog(query);
+    PrinLog(`USER AGENET:`);
+    PrinLog(userAgent);
 
     return next.handle().pipe(
       tap((res) => {
         const after = Date.now();
-        display ? console.log(JSON.stringify(res, null, 2)) : null;
-        console.log(
-          this.setColor(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed)
-        );
+        PrinLog(res);
+        PrinLog(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed);
       })
     );
   }

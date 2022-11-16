@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { swaggerCss } from "./swagger";
 import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { PrinLog } from "./constants/constants";
 
 const PORT = process.env.PORT || 5001;
 
@@ -37,6 +38,6 @@ async function bootstrap() {
 
   //Server initialization on PORT
   await app.listen(PORT);
-  console.log(`CONNECTED TO DB AND SERVER STARTED ON PORT - ${PORT}`);
+  PrinLog(`CONNECTED TO DB AND SERVER STARTED ON PORT - ${PORT}`);
 }
 bootstrap();

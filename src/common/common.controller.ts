@@ -65,7 +65,6 @@ export class CommonController {
     @Query() fileUpload: fileUploadDto,
     @UploadedFile() file: Express.Multer.File
   ): Promise<any> {
-    console.log(file);
     if (fileUpload.type === fileUploadEnum.user) {
       const user = await this.userService.findByIdOrThrow(+fileUpload.userId);
       user.profile = file.path;

@@ -8,6 +8,24 @@ const ENV = process.env;
 export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
+export const PrinLog = (message: string, color: string = logColor.FgWhite) => {
+  if (ENV.LOGENABLE === "true") {
+    if (typeof message == "string") {
+      message = setColor(message, color);
+      console.log(message);
+    } else {
+      console.log(JSON.stringify(message, null, 2));
+    }
+  }
+};
+
+export const setColor = (
+  string: string | string[] | undefined,
+  color: string
+) => {
+  return color + string + logColor.Reset;
+};
+
 export const DATABASE_URL = ENV.DATABASE_URL;
 export const TOKEN_SECRET = ENV.TOKEN_SECRET;
 export const TOKEN_EXPIRE = ENV.TOKEN_EXPIRE;

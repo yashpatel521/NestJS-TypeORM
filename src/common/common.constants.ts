@@ -48,8 +48,6 @@ export const multerOptions = {
       }
 
       if (type) {
-        console.log(type);
-
         if (fileUpload.includes(type)) {
           if (!existsSync(uploadPath)) {
             mkdirSync(uploadPath);
