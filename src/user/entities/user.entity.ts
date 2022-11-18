@@ -24,7 +24,10 @@ export class User {
   @Column({ default: "public/user/default.png" })
   profile: string;
 
-  @ManyToOne(() => Role, (role) => role.users, { eager: true })
+  @ManyToOne(() => Role, (role) => role.users, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
   role: Role;
 
   @CreateDateColumn()

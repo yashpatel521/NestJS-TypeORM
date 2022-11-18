@@ -8,4 +8,5 @@ export enum message {
   inValidCredentail = "Invalid credentials",
   roleNotFound = "Role not found",
   typeInValid = "Type is invalid",
+  moduleNotFound = "Module not found",
 }

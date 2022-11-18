@@ -13,11 +13,13 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "./constants/constants";
 import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
+import { ModulesModule } from "./module/module.module";
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({ ...config, autoLoadEntities: true }),
     CommonModule,
+    ModulesModule,
     AuthModule,
     UserModule,
     RoleModule,

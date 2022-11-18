@@ -26,6 +26,29 @@ export const setColor = (
   return color + string + logColor.Reset;
 };
 
+export const roles = ["admin", "customer"];
+export type rolesType = "admin" | "customer";
+export enum rolesEnum {
+  admin = "admin",
+  customer = "customer",
+}
+
+export const modules = ["user", "role"];
+export type modulesType = "user" | "role";
+export enum modulesEnum {
+  user = "user",
+  role = "role",
+}
+
+export const permissions = ["create", "get", "update", "delete"];
+export type permissionsType = "create" | "get" | "update" | "delete";
+export enum permissionsEnum {
+  create = "create",
+  get = "get",
+  update = "update",
+  delete = "delete",
+}
+
 export const DATABASE_URL = ENV.DATABASE_URL;
 export const TOKEN_SECRET = ENV.TOKEN_SECRET;
 export const TOKEN_EXPIRE = ENV.TOKEN_EXPIRE;
