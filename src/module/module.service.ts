@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Modules } from "./entities/module.entity";
-import { Role } from "../role/entities/role.entity";
 
 @Injectable()
 export class ModuleService {
