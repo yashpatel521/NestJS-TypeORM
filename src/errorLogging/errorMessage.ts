@@ -1,4 +1,5 @@
 export enum message {
+  notAuthorized = "You are not authorize to use this API.",
   tokenExpire = "Token got expire or token required",
   userNotFound = "user not found",
   passwordInvalid = "password is invalid",

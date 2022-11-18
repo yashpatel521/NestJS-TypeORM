@@ -12,10 +12,16 @@ import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { roleCreate, roleList } from "../ApiResponsExample/role";
-import { deleteSuccess } from "../constants/constants";
+import {
+  deleteSuccess,
+  modulesEnum,
+  permissionsEnum,
+  Roles,
+  rolesEnum,
+} from "../constants/constants";
 
 @ApiTags("Role")
-@Controller("role")
+@Controller(modulesEnum.role)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
@@ -26,11 +32,13 @@ export class RoleController {
       example: roleCreate,
     },
   })
+  @Roles(modulesEnum.role, permissionsEnum.post, [rolesEnum.admin])
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }
 
+  @Roles(modulesEnum.role, permissionsEnum.get, [rolesEnum.admin])
   @ApiBearerAuth()
   @ApiResponse({
     status: 200,
@@ -50,6 +58,7 @@ export class RoleController {
       example: roleCreate,
     },
   })
+  @Roles(modulesEnum.role, permissionsEnum.get, [rolesEnum.admin])
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.roleService.findByIdOrThrow(+id);
@@ -62,6 +71,7 @@ export class RoleController {
       example: roleCreate,
     },
   })
+  @Roles(modulesEnum.role, permissionsEnum.patch, [rolesEnum.admin])
   @Patch(":id")
   async update(@Param("id") id: number, @Body() updateRoleDto: UpdateRoleDto) {
     const role = await this.roleService.findByIdOrThrow(id);
@@ -80,6 +90,7 @@ export class RoleController {
       example: deleteSuccess,
     },
   })
+  @Roles(modulesEnum.role, permissionsEnum.delete, [rolesEnum.admin])
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.roleService.remove(+id);

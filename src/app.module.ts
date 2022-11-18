@@ -14,6 +14,7 @@ import { config } from "./constants/constants";
 import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
 import { ModulesModule } from "./module/module.module";
+import { RolesGuard } from "./auth/roles.guard";
 
 @Module({
   imports: [
@@ -41,6 +42,10 @@ import { ModulesModule } from "./module/module.module";
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

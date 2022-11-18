@@ -73,17 +73,21 @@ export class CommonController {
       });
     });
 
+    const adminRole = await this.roleService.findByNameOrThrow(rolesEnum.admin);
     let adminUser = {
       name: "Admin",
       email: "admin@admin.com",
       password: "Admin@1234",
-      role: await this.roleService.findByName(rolesEnum.admin),
+      role: adminRole,
     };
+    const customerRole = await this.roleService.findByNameOrThrow(
+      rolesEnum.customer
+    );
     let customerUser = {
       name: "Customer",
-      email: "customer@admin.com",
+      email: "customer@customer.com",
       password: "Customer@1234",
-      role: await this.roleService.findByName(rolesEnum.customer),
+      role: customerRole,
     };
 
     let admin = await this.userService.findByEmail(adminUser.email);

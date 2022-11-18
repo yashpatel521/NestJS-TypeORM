@@ -37,7 +37,7 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap((res) => {
         const after = Date.now();
-        PrinLog(res);
+        // PrinLog(res);
         PrinLog(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed);
       })
     );

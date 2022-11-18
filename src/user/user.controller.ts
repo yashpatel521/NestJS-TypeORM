@@ -12,7 +12,14 @@ import { message } from "../errorLogging/errorMessage";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { userCreate, userList } from "../ApiResponsExample/user";
-import { deleteSuccess, Public } from "../constants/constants";
+import {
+  deleteSuccess,
+  modulesEnum,
+  permissionsEnum,
+  Public,
+  Roles,
+  rolesEnum,
+} from "../constants/constants";
 import { User } from "./entities/user.entity";
 import * as bcrypt from "bcrypt";
 import { RoleService } from "../role/role.service";
@@ -28,6 +35,7 @@ export class UserController {
   ) {}
 
   @Public()
+  @Roles(modulesEnum.user, permissionsEnum.post, [rolesEnum.admin])
   @Post()
   @ApiResponse({
     status: 200,
@@ -63,19 +71,24 @@ export class UserController {
       example: userCreate,
     },
   })
+  @Roles(modulesEnum.user, permissionsEnum.patch, [
+    rolesEnum.admin,
+    rolesEnum.customer,
+  ])
   @Get(":id")
   async getUserById(@Param("id") id: number): Promise<User[] | User> {
     return await this.userService.findById(+id);
   }
 
   @ApiBearerAuth()
-  @Patch(":id")
   @ApiResponse({
     status: 200,
     schema: {
       example: userCreate,
     },
   })
+  @Roles(modulesEnum.user, permissionsEnum.patch, [rolesEnum.admin])
+  @Patch(":id")
   async updateUser(
     @Param("id") id: number,
     @Body() userData: UpdateUserDto
@@ -99,13 +112,14 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Delete(":id")
   @ApiResponse({
     status: 200,
     schema: {
       example: deleteSuccess,
     },
   })
+  @Roles(modulesEnum.user, permissionsEnum.delete, [rolesEnum.admin])
+  @Delete(":id")
   async deleteUser(@Param("id") id: number) {
     await this.userService.findByIdOrThrow(id);
     return await this.userService.delete(id);
