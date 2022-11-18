@@ -12,6 +12,7 @@ import { UserService } from "../user/user.service";
 import {
   DATABSE_URL,
   modules,
+  permissions,
   Public,
   roles,
   rolesEnum,
@@ -42,22 +43,33 @@ export class CommonController {
   @Public()
   @Get("addAdminUser")
   async addAdminUser() {
+    // Create Roles
     roles.forEach(async (name: string) => {
       let role = await this.roleService.findByName(name);
       if (!role) {
         role = await this.roleService.create({ name });
       }
+
+      // Create Modules ar per Role
       modules.forEach(async (name: string) => {
-        const module = await this.moduleService.findByNameAndRole(
-          name,
-          role.id
-        );
+        let module = await this.moduleService.findByNameAndRole(name, role.id);
         if (!module) {
-          await this.moduleService.create({
+          module = await this.moduleService.create({
             name,
             role,
           });
         }
+        // Create Permission ar per Modules
+        permissions.forEach(async (name: string) => {
+          const permission =
+            await this.moduleService.findPermissionByNameAndModule(
+              name,
+              module.id
+            );
+          if (!permission) {
+            await this.moduleService.createPermission({ name, module });
+          }
+        });
       });
     });
 
