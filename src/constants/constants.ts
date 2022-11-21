@@ -1,4 +1,4 @@
-import { applyDecorators, SetMetadata } from "@nestjs/common";
+import { SetMetadata } from "@nestjs/common";
 import * as dotenv from "dotenv";
 import { DataSourceOptions } from "typeorm";
 
@@ -49,13 +49,9 @@ export enum permissionsEnum {
   delete = "delete",
 }
 
-export function Roles(module: string, permission: string, roles: string[]) {
-  return applyDecorators(
-    SetMetadata("roles", roles),
-    SetMetadata("permission", permission),
-    SetMetadata("module", module)
-  );
-}
+export const IS_MODULE_KEY = "module";
+export const Roles = (module: modulesType) =>
+  SetMetadata(IS_MODULE_KEY, module);
 
 export const DATABASE_URL = ENV.DATABASE_URL;
 export const TOKEN_SECRET = ENV.TOKEN_SECRET;

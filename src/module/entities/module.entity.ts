@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Permission } from "./modulePermission.entity";
+import { modulesType } from "../../constants/constants";
 
 @Unique(["name", "role"])
 @Entity()
@@ -17,7 +18,7 @@ export class Modules {
   id: number;
 
   @Column()
-  name: string;
+  name: modulesType;
 
   @Column({ default: true })
   permission: boolean;

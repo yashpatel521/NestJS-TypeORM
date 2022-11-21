@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { IS_MODULE_KEY, modulesType } from "../constants/constants";
 import { message } from "../errorLogging/errorMessage";
 import { ModuleService } from "../module/module.service";
 
@@ -16,27 +17,21 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles = this.reflector.get<string[]>("roles", context.getHandler());
-    const permission = this.reflector.get<string>(
-      "permission",
+    const module = this.reflector.get<modulesType>(
+      IS_MODULE_KEY,
       context.getHandler()
     );
-    const module = this.reflector.get<string>("module", context.getHandler());
 
-    if (!roles && !permission && !module) {
+    if (!module) {
       return true;
     }
     const request = context.switchToHttp().getRequest();
     const userRole = request.user.role.name;
     let access = true;
-    if (!roles.includes(userRole)) {
-      access = false;
-    }
-
     access = await this.moduleService.findPermissionByRole(
       userRole,
       module,
-      permission
+      request.method.toLowerCase()
     );
 
     if (!access) {

@@ -12,7 +12,9 @@ import { UserService } from "../user/user.service";
 import {
   DATABSE_URL,
   modules,
+  modulesType,
   permissions,
+  permissionsType,
   Public,
   roles,
   rolesEnum,
@@ -51,7 +53,7 @@ export class CommonController {
       }
 
       // Create Modules ar per Role
-      modules.forEach(async (name: string) => {
+      modules.forEach(async (name: modulesType) => {
         let module = await this.moduleService.findByNameAndRole(name, role.id);
         if (!module) {
           module = await this.moduleService.create({
@@ -60,7 +62,7 @@ export class CommonController {
           });
         }
         // Create Permission ar per Modules
-        permissions.forEach(async (name: string) => {
+        permissions.forEach(async (name: permissionsType) => {
           const permission =
             await this.moduleService.findPermissionByNameAndModule(
               name,

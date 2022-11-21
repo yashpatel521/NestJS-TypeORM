@@ -15,10 +15,8 @@ import { userCreate, userList } from "../ApiResponsExample/user";
 import {
   deleteSuccess,
   modulesEnum,
-  permissionsEnum,
   Public,
   Roles,
-  rolesEnum,
 } from "../constants/constants";
 import { User } from "./entities/user.entity";
 import * as bcrypt from "bcrypt";
@@ -35,7 +33,7 @@ export class UserController {
   ) {}
 
   @Public()
-  @Roles(modulesEnum.user, permissionsEnum.post, [rolesEnum.admin])
+  @Roles(modulesEnum.user)
   @Post()
   @ApiResponse({
     status: 200,
@@ -71,10 +69,7 @@ export class UserController {
       example: userCreate,
     },
   })
-  @Roles(modulesEnum.user, permissionsEnum.patch, [
-    rolesEnum.admin,
-    rolesEnum.customer,
-  ])
+  @Roles(modulesEnum.user)
   @Get(":id")
   async getUserById(@Param("id") id: number): Promise<User[] | User> {
     return await this.userService.findById(+id);
@@ -87,7 +82,7 @@ export class UserController {
       example: userCreate,
     },
   })
-  @Roles(modulesEnum.user, permissionsEnum.patch, [rolesEnum.admin])
+  @Roles(modulesEnum.user)
   @Patch(":id")
   async updateUser(
     @Param("id") id: number,
@@ -118,7 +113,7 @@ export class UserController {
       example: deleteSuccess,
     },
   })
-  @Roles(modulesEnum.user, permissionsEnum.delete, [rolesEnum.admin])
+  @Roles(modulesEnum.user)
   @Delete(":id")
   async deleteUser(@Param("id") id: number) {
     await this.userService.findByIdOrThrow(id);

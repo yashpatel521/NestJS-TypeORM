@@ -1,3 +1,4 @@
+import { permissionsType } from "../../constants/constants";
 import {
   Entity,
   Column,
@@ -15,7 +16,7 @@ export class Permission {
   id: number;
 
   @Column()
-  name: string;
+  name: permissionsType;
 
   @Column({ default: true })
   permission: boolean;
