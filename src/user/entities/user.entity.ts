@@ -21,7 +21,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: "public/user/default.png" })
+  @Column({ default: "public/default.png" })
   profile: string;
 
   @ManyToOne(() => Role, (role) => role.users, {

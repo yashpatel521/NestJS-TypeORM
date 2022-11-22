@@ -17,9 +17,9 @@ export enum fileUploadEnum {
 
 // Multer upload options
 export const multerOptions = {
-  // Enable file size limits
+  // Enable file size limits MAX_FILE_SIZE(MB)
   limits: {
-    fileSize: +ENV.MAX_FILE_SIZE,
+    fileSize: +ENV.MAX_FILE_SIZE * 1024 * 1024,
   },
   // Check the mimetypes to allow for upload
   fileFilter: (req: any, file: any, cb: any) => {
@@ -41,6 +41,8 @@ export const multerOptions = {
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
       const { type } = req.query as { type: string };
+      console.log(type);
+
       let uploadPath = ENV.FILE_UPLOAD_LOCATION;
       // Create folder if doesn't exist
       if (!existsSync(ENV.FILE_UPLOAD_LOCATION)) {
@@ -64,7 +66,7 @@ export const multerOptions = {
     // File modification details
     filename: (req: any, file: any, cb: any) => {
       // Calling the callback passing the random name generated with the original extension name
-      cb(null, `${uuid()}${extname(file.originalname)}`);
+      cb(null, `${uuid()}${extname(file.originalname).toLocaleLowerCase()}`);
     },
   }),
 };

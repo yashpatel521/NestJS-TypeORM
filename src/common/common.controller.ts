@@ -4,9 +4,10 @@ import {
   Post,
   Query,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "../user/user.service";
 import {
@@ -15,6 +16,7 @@ import {
   modulesType,
   permissions,
   permissionsType,
+  PrinLog,
   Public,
   roles,
   rolesEnum,
@@ -119,5 +121,18 @@ export class CommonController {
     } else {
       return { path: file.path };
     }
+  }
+
+  @Public()
+  @UseInterceptors(AnyFilesInterceptor(multerOptions))
+  @Post("fileUploads")
+  async uploadFiles(
+    @Query() fileUpload: fileUploadDto,
+    @UploadedFiles() files: Array<Express.Multer.File>
+  ): Promise<any> {
+    files.forEach((file) => {
+      PrinLog(file.path);
+    });
+    return files;
   }
 }
