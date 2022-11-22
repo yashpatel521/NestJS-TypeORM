@@ -5,10 +5,9 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { swaggerCss } from "./swagger";
 import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { PrinLog } from "./constants/constants";
+import { getLocalIpAddress, PrinLog, PORT } from "./constants/constants";
 
-const PORT = process.env.PORT || 5001;
-
+declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -38,6 +37,11 @@ async function bootstrap() {
 
   //Server initialization on PORT
   await app.listen(PORT);
-  PrinLog(`CONNECTED TO DB AND SERVER STARTED ON PORT - ${PORT}`);
+  PrinLog(`CONNECTED TO DB AND SERVER STARTED ON - ${getLocalIpAddress()}`);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

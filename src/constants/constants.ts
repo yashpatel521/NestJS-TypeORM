@@ -4,6 +4,7 @@ import { DataSourceOptions } from "typeorm";
 
 dotenv.config();
 const ENV = process.env;
+export const PORT = ENV.PORT || 5001;
 
 export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -80,8 +81,6 @@ if (ENV.USE_DB === "LOCAL") {
   };
 }
 
-export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
-
 type dbType = "mysql" | "postgres";
 
 export const config: DataSourceOptions = {
@@ -126,3 +125,25 @@ export const deleteSuccess = {
   statusCode: 200,
   success: true,
 };
+
+export const getLocalIpAddress = () => {
+  const { networkInterfaces } = require("os");
+
+  const nets = networkInterfaces();
+  const results = Object.create(null);
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      const familyV4Value = typeof net.family === "string" ? "IPv4" : 4;
+      if (net.family === familyV4Value && !net.internal) {
+        if (!results[name]) {
+          results[name] = [];
+        }
+        results[name].push(net.address);
+      }
+    }
+  }
+  return `http://${results.Ethernet[0]}:${PORT}`;
+};
+
+export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
