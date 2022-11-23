@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
+  AfterLoad,
 } from "typeorm";
+import { SERVER_URL } from "../../constants/constants";
 
 @Entity()
 export class User {
@@ -32,4 +34,24 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @AfterLoad()
+  afterLoad() {
+    if (this.profile) {
+      if (!this.isValidHttpUrl(this.profile)) {
+        this.profile = SERVER_URL + this.profile;
+      }
+    } else {
+      this.profile = null;
+    }
+  }
+  isValidHttpUrl(string: string) {
+    let url: any;
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
 }

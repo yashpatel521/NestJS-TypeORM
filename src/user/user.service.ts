@@ -4,7 +4,6 @@ import { DeepPartial, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
 import { message } from "../errorLogging/errorMessage";
-import { SERVER_URL } from "../constants/constants";
 
 @Injectable()
 export class UserService {
@@ -14,14 +13,7 @@ export class UserService {
   ) {}
 
   async findAllUsers(): Promise<User[]> {
-    let users = await this.usersRepository.find();
-    users = users.map((user) => {
-      return {
-        ...user,
-        profile: user.profile ? SERVER_URL + user.profile : null,
-      };
-    });
-    return users;
+    return await this.usersRepository.find();
   }
 
   async create(user: DeepPartial<User>): Promise<User> {
@@ -30,15 +22,11 @@ export class UserService {
   }
 
   async save(userUpdate: User): Promise<User> {
-    let user = await this.usersRepository.save(userUpdate);
-    user.profile = user.profile ? SERVER_URL + user.profile : null;
-    return user;
+    return await this.usersRepository.save(userUpdate);
   }
 
   async findByEmail(email: string): Promise<User> {
-    let user = await this.usersRepository.findOne({ where: { email } });
-    if (user) user.profile = user.profile ? SERVER_URL + user.profile : null;
-    return user;
+    return await this.usersRepository.findOne({ where: { email } });
   }
 
   async findByEmailOrThrow(email: string): Promise<User> {
@@ -48,9 +36,7 @@ export class UserService {
   }
 
   async findById(id: number): Promise<User> {
-    let user = await this.usersRepository.findOneBy({ id });
-    if (user) user.profile = user.profile ? SERVER_URL + user.profile : null;
-    return user;
+    return await this.usersRepository.findOneBy({ id });
   }
 
   async findByIdOrThrow(id: number): Promise<User> {

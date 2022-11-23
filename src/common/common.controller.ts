@@ -131,8 +131,9 @@ export class CommonController {
     @Query() fileUpload: fileUploadDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<any> {
-    files.forEach((file) => {
+    files.forEach((file: any) => {
       PrinLog(file.path);
+      file.image = SERVER_URL + file.path;
     });
     return files;
   }
