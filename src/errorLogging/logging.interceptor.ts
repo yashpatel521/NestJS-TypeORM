@@ -15,14 +15,13 @@ export interface Response<T> {
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.getArgByIndex(1).req;
     const before = Date.now();
-    let { method, path: url } = req;
-    const { body, params, query } = req;
-    let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const req = context.getArgByIndex(1).req;
+    const { body, params, query, method, path } = req;
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const userAgent = req.get("user-agent") || "";
 
-    ForceLog(`REQUEST: ${ip} ` + `${method} path: ${url}`, logColor.BgBlue);
+    ForceLog(`REQUEST: ${ip} ` + `${method} path: ${path}`, logColor.BgBlue);
     PrinLog(`"origin:`);
     PrinLog(req.get("origin"));
     PrinLog(`BODY:`);
