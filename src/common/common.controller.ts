@@ -20,6 +20,7 @@ import {
   Public,
   roles,
   rolesEnum,
+  SERVER_URL,
 } from "../constants/constants";
 import { fileUploadEnum, multerOptions } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
@@ -45,7 +46,7 @@ export class CommonController {
   }
 
   @Public()
-  @Get("addAdminUser")
+  @Get("addDefaultUsers")
   async addAdminUser() {
     // Create Roles
     roles.forEach(async (name: string) => {
@@ -119,7 +120,7 @@ export class CommonController {
       user.profile = file.path;
       return await this.userService.save(user);
     } else {
-      return { path: file.path };
+      return { path: file.path, image: SERVER_URL + file.path };
     }
   }
 

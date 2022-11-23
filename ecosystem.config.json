@@ -1,0 +1,19 @@
+{
+  "apps": [
+    {
+      "name": "NestJs-TypeORM",
+      "script": "dist/main.js",
+      "instances": 1,
+      "autorestart": true,
+      "watch": false,
+      "time": true,
+      "env": {
+        "SYNC_DB": false,
+        "PORT": 5000,
+        "USE_DB": "LOCAL"
+      },
+      "out_file": "/dev/null",
+      "error_file": "/dev/null"
+    }
+  ]
+}

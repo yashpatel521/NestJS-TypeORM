@@ -6,7 +6,7 @@ import {
   HttpException,
 } from "@nestjs/common";
 import { Observable, throwError, map, catchError, tap } from "rxjs";
-import { logColor, PrinLog } from "../constants/constants";
+import { ForceLog, logColor, PrinLog } from "../constants/constants";
 
 export interface Response<T> {
   data: T;
@@ -22,7 +22,7 @@ export class LoggingInterceptor implements NestInterceptor {
     let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const userAgent = req.get("user-agent") || "";
 
-    PrinLog(`REQUEST: ${ip} ` + `${method} path: ${url}`, logColor.BgBlue);
+    ForceLog(`REQUEST: ${ip} ` + `${method} path: ${url}`, logColor.BgBlue);
     PrinLog(`"origin:`);
     PrinLog(req.get("origin"));
     PrinLog(`BODY:`);
@@ -37,8 +37,8 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap((res) => {
         const after = Date.now();
-        // PrinLog(res);
-        PrinLog(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed);
+        PrinLog(res);
+        ForceLog(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed);
       })
     );
   }

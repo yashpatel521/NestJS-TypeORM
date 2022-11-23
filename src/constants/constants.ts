@@ -20,6 +20,15 @@ export const PrinLog = (message: string, color: string = logColor.FgWhite) => {
   }
 };
 
+export const ForceLog = (message: string, color: string = logColor.FgWhite) => {
+  if (typeof message == "string") {
+    message = setColor(message, color);
+    console.log(message);
+  } else {
+    console.log(JSON.stringify(message, null, 2));
+  }
+};
+
 export const setColor = (
   string: string | string[] | undefined,
   color: string
@@ -59,7 +68,6 @@ export const TOKEN_SECRET = ENV.TOKEN_SECRET;
 export const TOKEN_EXPIRE = ENV.TOKEN_EXPIRE;
 export const REFRESH_TOKEN_SECRET = ENV.REFRESH_TOKEN_SECRET;
 export const REFRESH_TOKEN_EXPIRE = ENV.REFRESH_TOKEN_EXPIRE;
-export const SERVER_URL = `http://${ENV.SERVER}:${ENV.PORT}/`;
 
 let configDB = {
   type: ENV.DB_TYPE,
@@ -147,3 +155,4 @@ export const getLocalIpAddress = () => {
 };
 
 export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
+export const SERVER_URL = `${getLocalIpAddress()}/`;

@@ -17,9 +17,9 @@ export enum fileUploadEnum {
 
 // Multer upload options
 export const multerOptions = {
-  // Enable file size limits MAX_FILE_SIZE(MB)
+  // Enable file size limits MAX_FILE_SIZE_IN_MB
   limits: {
-    fileSize: +ENV.MAX_FILE_SIZE * 1024 * 1024,
+    fileSize: +ENV.MAX_FILE_SIZE_IN_MB * 1024 * 1024,
   },
   // Check the mimetypes to allow for upload
   fileFilter: (req: any, file: any, cb: any) => {
@@ -41,7 +41,6 @@ export const multerOptions = {
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
       const { type } = req.query as { type: string };
-      console.log(type);
 
       let uploadPath = ENV.FILE_UPLOAD_LOCATION;
       // Create folder if doesn't exist
@@ -51,17 +50,17 @@ export const multerOptions = {
 
       if (type) {
         if (fileUpload.includes(type)) {
-          if (!existsSync(uploadPath)) {
-            mkdirSync(uploadPath);
-          }
-          uploadPath = ENV.FILE_UPLOAD_LOCATION + "/" + type;
-          cb(null, uploadPath);
+          uploadPath = uploadPath + "/" + type;
         } else {
           cb(new BadRequestException(message.typeInValid), false);
         }
       } else {
-        cb(null, uploadPath);
+        uploadPath = uploadPath + "/others";
       }
+      if (!existsSync(uploadPath)) {
+        mkdirSync(uploadPath);
+      }
+      cb(null, uploadPath);
     },
     // File modification details
     filename: (req: any, file: any, cb: any) => {
