@@ -19,14 +19,12 @@ import {
   rolesEnum,
   SERVER_URL,
 } from "../constants/constants";
-import { fileUploadServer, localStorage } from "./common.constants";
+import { fileUploadServer } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
 import { RoleService } from "../role/role.service";
 import { ModuleService } from "../module/module.service";
 import { MyNewFileInterceptor } from "./common.service";
-import { Request } from "express";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { v2 } from "cloudinary";
+
 @ApiTags("Common")
 @Controller()
 export class CommonController {
@@ -109,28 +107,7 @@ export class CommonController {
   }
 
   @Public()
-  @UseInterceptors(
-    MyNewFileInterceptor("file", (ctx) => {
-      const req = ctx.switchToHttp().getRequest() as Request;
-      let storage = {};
-
-      if (fileUploadServer === "CLOUDINARY") {
-        storage = new CloudinaryStorage({
-          cloudinary: v2,
-          params: {
-            // @ts-ignore
-            folder: req.query.type,
-          },
-        });
-      } else if (fileUploadServer === "LOCAL") {
-        storage = localStorage;
-      }
-
-      return {
-        storage,
-      };
-    })
-  )
+  @UseInterceptors(MyNewFileInterceptor("file"))
   @Post("fileUpload")
   async uploadFile(
     @Query() fileUpload: fileUploadDto,

@@ -9,7 +9,7 @@ dotenv.config();
 const ENV = process.env;
 export const fileUploadServer = ENV.FILE_UPLOAD;
 export const fileUploadLocation = ENV.FILE_UPLOAD_LOCATION;
-export const fileUploadSize = ENV.MAX_FILE_SIZE_IN_MB;
+export const fileUploadSize = +ENV.MAX_FILE_SIZE_IN_MB;
 export const fileUpload = ["user", "others"];
 export type fileUploadType = "user" | "others";
 export enum fileUploadEnum {

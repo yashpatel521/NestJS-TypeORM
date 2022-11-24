@@ -9,18 +9,21 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { extname } from "path";
-import { fileUpload, fileUploadSize, fileUploadType } from "./common.constants";
+import {
+  fileUpload,
+  fileUploadServer,
+  fileUploadSize,
+  fileUploadType,
+} from "./common.constants";
 import { FileInterceptor, MulterModuleOptions } from "@nestjs/platform-express";
-import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 import { MULTER_MODULE_OPTIONS } from "@nestjs/platform-express/multer/files.constants";
 import * as multer from "multer";
 import { Request } from "express";
 import { message } from "src/errorLogging/errorMessage";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 } from "cloudinary";
 
-export const MyNewFileInterceptor = (
-  fieldName: string,
-  localOptions?: (context: ExecutionContext) => MulterOptions
-) => {
+export const MyNewFileInterceptor = (fieldName: string) => {
   const FileInterceptorInstance = FileInterceptor(fieldName);
 
   class MixinInterceptor extends FileInterceptorInstance {
@@ -42,13 +45,24 @@ export const MyNewFileInterceptor = (
       if (!fileUpload.includes(type))
         throw new BadRequestException(message.typeInValid);
 
+      let storage = {};
+      if (fileUploadServer === "CLOUDINARY") {
+        storage = new CloudinaryStorage({
+          cloudinary: v2,
+          params: {
+            // @ts-ignore
+            folder: type,
+          },
+        });
+      } else if (fileUploadServer === "LOCAL") {
+        storage = localStorage;
+      }
+
       this.multer = (multer as any)({
         ...this.moduleOptions,
-        // Enable file size limits MAX_FILE_SIZE_IN_MB
         limits: {
-          fileSize: +fileUploadSize * 1024 * 1024,
+          fileSize: fileUploadSize * 1024 * 1024,
         },
-        // Check the mimetypes to allow for upload
         fileFilter: (req: any, file: any, cb: any) => {
           if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
             cb(null, true);
@@ -61,7 +75,7 @@ export const MyNewFileInterceptor = (
             );
           }
         },
-        ...localOptions(context),
+        storage,
       });
       return super.intercept(context, next);
     }
