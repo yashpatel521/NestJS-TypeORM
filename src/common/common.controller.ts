@@ -4,10 +4,8 @@ import {
   Post,
   Query,
   UploadedFile,
-  UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
-import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "../user/user.service";
 import {
@@ -16,17 +14,19 @@ import {
   modulesType,
   permissions,
   permissionsType,
-  PrinLog,
   Public,
   roles,
   rolesEnum,
   SERVER_URL,
 } from "../constants/constants";
-import { fileUploadEnum, multerOptions } from "./common.constants";
+import { fileUploadServer, localStorage } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
 import { RoleService } from "../role/role.service";
 import { ModuleService } from "../module/module.service";
-
+import { MyNewFileInterceptor } from "./common.service";
+import { Request } from "express";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 } from "cloudinary";
 @ApiTags("Common")
 @Controller()
 export class CommonController {
@@ -47,7 +47,7 @@ export class CommonController {
 
   @Public()
   @Get("addDefaultUsers")
-  async addAdminUser() {
+  async addDefaultUsers() {
     // Create Roles
     roles.forEach(async (name: string) => {
       let role = await this.roleService.findByName(name);
@@ -109,32 +109,37 @@ export class CommonController {
   }
 
   @Public()
-  @UseInterceptors(FileInterceptor("file", multerOptions))
+  @UseInterceptors(
+    MyNewFileInterceptor("file", (ctx) => {
+      const req = ctx.switchToHttp().getRequest() as Request;
+      let storage = {};
+
+      if (fileUploadServer === "CLOUDINARY") {
+        storage = new CloudinaryStorage({
+          cloudinary: v2,
+          params: {
+            // @ts-ignore
+            folder: req.query.type,
+          },
+        });
+      } else if (fileUploadServer === "LOCAL") {
+        storage = localStorage;
+      }
+
+      return {
+        storage,
+      };
+    })
+  )
   @Post("fileUpload")
   async uploadFile(
     @Query() fileUpload: fileUploadDto,
     @UploadedFile() file: Express.Multer.File
   ): Promise<any> {
-    if (fileUpload.type === fileUploadEnum.user) {
-      const user = await this.userService.findByIdOrThrow(+fileUpload.userId);
-      user.profile = file.path;
-      return await this.userService.save(user);
+    if (fileUploadServer === "CLOUDINARY") {
+      return { path: file.path, image: file.path };
     } else {
       return { path: file.path, image: SERVER_URL + file.path };
     }
-  }
-
-  @Public()
-  @UseInterceptors(AnyFilesInterceptor(multerOptions))
-  @Post("fileUploads")
-  async uploadFiles(
-    @Query() fileUpload: fileUploadDto,
-    @UploadedFiles() files: Array<Express.Multer.File>
-  ): Promise<any> {
-    files.forEach((file: any) => {
-      PrinLog(file.path);
-      file.image = SERVER_URL + file.path;
-    });
-    return files;
   }
 }
