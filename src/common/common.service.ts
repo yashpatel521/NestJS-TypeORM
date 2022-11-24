@@ -19,7 +19,7 @@ import { FileInterceptor, MulterModuleOptions } from "@nestjs/platform-express";
 import { MULTER_MODULE_OPTIONS } from "@nestjs/platform-express/multer/files.constants";
 import * as multer from "multer";
 import { Request } from "express";
-import { message } from "src/errorLogging/errorMessage";
+import { message } from "../errorLogging/errorMessage";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 } from "cloudinary";
 
