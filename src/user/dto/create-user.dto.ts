@@ -17,6 +17,8 @@ export class CreateUserDto {
 
   // @example 'admin'
   role: string;
+
+  fcmToken?: string;
 }
 
 /**

@@ -22,6 +22,9 @@ import { Request } from "express";
 import { message } from "../errorLogging/errorMessage";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 } from "cloudinary";
+import firebaseAdmin, { messaging } from "firebase-admin";
+import serviceAccount from "../../firbaseToken.json";
+import { isFcmEnable } from "../constants/constants";
 
 export const MyNewFileInterceptor = (fieldName: string) => {
   const FileInterceptorInstance = FileInterceptor(fieldName);
@@ -84,3 +87,15 @@ export const MyNewFileInterceptor = (fieldName: string) => {
   const Interceptor = mixin(MixinInterceptor);
   return Interceptor as Type<NestInterceptor>;
 };
+
+const firebase = isFcmEnable
+  ? firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.credential.cert(serviceAccount as any),
+    })
+  : null;
+export class CommonService {
+  async sendMessage(body: messaging.MulticastMessage) {
+    const messageTemp = await firebase.messaging().sendMulticast(body);
+    return messageTemp;
+  }
+}

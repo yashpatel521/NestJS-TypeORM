@@ -29,9 +29,17 @@ async function bootstrap() {
     swaggerOptions: { tagsSorter: "alpha" },
   });
 
-  app.useStaticAssets(join(__dirname, "..", "public"), {
+  app.useStaticAssets(join(__dirname, "..", "../public"), {
     index: false,
     prefix: "/public",
+  });
+
+  app.use("/loginForm", (req, res) => {
+    res.sendFile(join(__dirname, "../../src/index.html"));
+  });
+
+  app.use("/firebase-messaging-sw.js", (req, res) => {
+    res.sendFile(join(__dirname, "../../src/firebase-messaging-sw.js"));
   });
 
   //Server initialization on PORT

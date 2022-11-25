@@ -21,7 +21,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const userAgent = req.get("user-agent") || "";
 
-    ForceLog(`REQUEST: ${ip} ` + `${method} path: ${path}`, logColor.BgBlue);
+    ForceLog(`REQUEST: ${ip} ` + `${method} path: ${path}`, logColor.FgBlue);
     PrinLog(`"origin:`);
     PrinLog(req.get("origin"));
     PrinLog(`BODY:`);
@@ -37,7 +37,7 @@ export class LoggingInterceptor implements NestInterceptor {
       tap((res) => {
         const after = Date.now();
         PrinLog(res);
-        ForceLog(`RESPONSE TIME:::${after - before}ms`, logColor.BgRed);
+        ForceLog(`RESPONSE TIME:::${after - before}ms`, logColor.FgRed);
       })
     );
   }

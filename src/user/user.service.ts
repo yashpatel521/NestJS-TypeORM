@@ -4,12 +4,14 @@ import { DeepPartial, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
 import { message } from "../errorLogging/errorMessage";
+import { CommonService } from "src/common/common.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
+    private readonly commonService: CommonService
   ) {}
 
   async findAllUsers(): Promise<User[]> {
@@ -47,5 +49,26 @@ export class UserService {
 
   async delete(id: number) {
     await this.usersRepository.delete(id);
+  }
+
+  async fmcTokenCheck() {
+    const user = await this.usersRepository
+      .createQueryBuilder("user")
+      .where("user.fcmToken != :fcmToken", { fcmToken: "" })
+      .getOne();
+
+    const body = {
+      tokens: [user.fcmToken],
+      notification: {
+        title: "NestJs + TypeORM",
+        body: "This is a boilerplate for NestJs and TypeORM that provides with basic example functionality.",
+        imageUrl: "https://picsum.photos/200/300",
+      },
+      data: {
+        url: "/user",
+      },
+    };
+
+    return await this.commonService.sendMessage(body);
   }
 }

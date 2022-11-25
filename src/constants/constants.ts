@@ -6,6 +6,8 @@ dotenv.config();
 const ENV = process.env;
 export const PORT = ENV.PORT || 5001;
 
+export const isFcmEnable = ENV.FCM === "true" ? true : false;
+
 export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 

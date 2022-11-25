@@ -23,6 +23,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  fcmToken: string;
+
   @Column({ default: "public/default.png" })
   profile: string;
 

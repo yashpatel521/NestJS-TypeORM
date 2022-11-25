@@ -33,6 +33,12 @@ export class UserController {
   ) {}
 
   @Public()
+  @Get("fcmTest")
+  async getFcmTest() {
+    return await this.userService.fmcTokenCheck();
+  }
+
+  @Public()
   @Roles(modulesEnum.user)
   @Post()
   @ApiResponse({
@@ -90,9 +96,11 @@ export class UserController {
   ): Promise<User> {
     const user = await this.userService.findByIdOrThrow(id);
 
-    const isMatch = await bcrypt.compare(userData.password, user.password);
-    if (!isMatch) {
-      throw new BadRequestException(message.passwordInvalid);
+    if (userData.password) {
+      // const isMatch = await bcrypt.compare(userData.password, user.password);
+      // if (!isMatch) {
+      //   throw new BadRequestException(message.passwordInvalid);
+      // }
     }
 
     if (userData.email) {
@@ -101,6 +109,10 @@ export class UserController {
         throw new BadRequestException(message.emailExists);
       }
       user.email = userData.email;
+    }
+
+    if (userData.fcmToken) {
+      user.fcmToken = userData.fcmToken;
     }
 
     return await this.userService.save(user);
