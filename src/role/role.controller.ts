@@ -12,7 +12,8 @@ import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { roleCreate, roleList } from "../ApiResponsExample/role";
-import { deleteSuccess, modulesEnum, Roles } from "../constants/constants";
+import { deleteSuccess, Roles } from "../constants/constants";
+import { modulesEnum } from "../constants/types";
 
 @ApiTags("Role")
 @Controller(modulesEnum.role)

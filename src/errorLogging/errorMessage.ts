@@ -10,4 +10,6 @@ export enum message {
   roleNotFound = "Role not found",
   typeInValid = "Type is invalid",
   moduleNotFound = "Module not found",
+  mailServiceNotEnable = "Mail service is not enabled",
+  fcmServiceNotEnabled = "FCM service is not enabled",
 }

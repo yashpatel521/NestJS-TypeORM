@@ -1,12 +1,21 @@
 import { SetMetadata } from "@nestjs/common";
 import * as dotenv from "dotenv";
 import { DataSourceOptions } from "typeorm";
+import { modulesType } from "./types";
 
 dotenv.config();
 const ENV = process.env;
 export const PORT = ENV.PORT || 5001;
 
 export const isFcmEnable = ENV.FCM === "true" ? true : false;
+export const isMailEnable = ENV.MAIL === "true" ? true : false;
+
+export const mailConfig = {
+  host: ENV.MAIL_HOST,
+  user: ENV.MAIL_USER,
+  password: ENV.MAIL_PASSWORD,
+  from: ENV.MAIL_FROM,
+};
 
 export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -37,29 +46,6 @@ export const setColor = (
 ) => {
   return color + string + logColor.Reset;
 };
-
-export const roles = ["admin", "customer"];
-export type rolesType = "admin" | "customer";
-export enum rolesEnum {
-  admin = "admin",
-  customer = "customer",
-}
-
-export const modules = ["user", "role"];
-export type modulesType = "user" | "role";
-export enum modulesEnum {
-  user = "user",
-  role = "role",
-}
-
-export const permissions = ["post", "get", "patch", "delete"];
-export type permissionsType = "post" | "get" | "patch" | "delete";
-export enum permissionsEnum {
-  post = "post",
-  get = "get",
-  patch = "patch",
-  delete = "delete",
-}
 
 export const IS_MODULE_KEY = "module";
 export const Roles = (module: modulesType) =>
@@ -141,16 +127,18 @@ export const getLocalIpAddress = () => {
 
   const nets = networkInterfaces();
   let ip = "localhost";
+  const results = [];
 
   for (const name of Object.keys(nets)) {
     for (const net of nets[name]) {
       const familyV4Value = typeof net.family === "string" ? "IPv4" : 4;
       if (net.family === familyV4Value && !net.internal) {
-        ip = net.address;
+        results.push(net);
       }
     }
   }
 
+  ip = results.length ? results[0].address : ip;
   return `http://${ip}:${PORT}`;
 };
 

@@ -4,14 +4,18 @@ import { DeepPartial, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "./entities/user.entity";
 import { message } from "../errorLogging/errorMessage";
-import { CommonService } from "src/common/common.service";
+import { CommonService } from "../common/common.service";
+import { MailService } from "../mail/mail.service";
+import { SERVER_URL } from "../constants/constants";
+import { mailContextType, rolesEnum } from "../constants/types";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private mailService: MailService
   ) {}
 
   async findAllUsers(): Promise<User[]> {
@@ -70,5 +74,20 @@ export class UserService {
     };
 
     return await this.commonService.sendMessage(body);
+  }
+
+  async mailCheck() {
+    const user = await this.usersRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.role", "role")
+      .where("role.name = :role", { role: rolesEnum.customer })
+      .getOne();
+
+    const context: mailContextType = {
+      template: "confirmation",
+      url: SERVER_URL,
+      subject: "This is a confirmation",
+    };
+    return await this.mailService.sendUserConfirmation(user, context);
   }
 }

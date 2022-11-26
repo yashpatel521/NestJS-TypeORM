@@ -5,7 +5,8 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { IS_MODULE_KEY, modulesType } from "../constants/constants";
+import { IS_MODULE_KEY } from "../constants/constants";
+import { modulesType } from "../constants/types";
 import { message } from "../errorLogging/errorMessage";
 import { ModuleService } from "../module/module.service";
 

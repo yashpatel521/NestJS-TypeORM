@@ -9,21 +9,20 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "../user/user.service";
 import {
-  DATABSE_URL,
   modules,
   modulesType,
   permissions,
   permissionsType,
-  Public,
   roles,
   rolesEnum,
-  SERVER_URL,
-} from "../constants/constants";
+} from "../constants/types";
+import { SERVER_URL, Public } from "../constants/constants";
 import { fileUploadServer } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
 import { RoleService } from "../role/role.service";
 import { ModuleService } from "../module/module.service";
 import { MyNewFileInterceptor } from "./common.service";
+import { MailService } from "../mail/mail.service";
 
 @ApiTags("Common")
 @Controller()
@@ -31,7 +30,8 @@ export class CommonController {
   constructor(
     private readonly userService: UserService,
     private readonly roleService: RoleService,
-    private readonly moduleService: ModuleService
+    private readonly moduleService: ModuleService,
+    private mailService: MailService
   ) {}
 
   @Public()
@@ -39,7 +39,7 @@ export class CommonController {
   serverStatus() {
     return {
       server: "Server is running",
-      database: DATABSE_URL,
+      database: "Database is running",
     };
   }
 

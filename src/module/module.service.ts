@@ -4,7 +4,7 @@ import { DeepPartial, Repository } from "typeorm";
 import { Modules } from "./entities/module.entity";
 import { Permission } from "./entities/modulePermission.entity";
 import { RoleService } from "../role/role.service";
-import { modulesType, permissionsType } from "../constants/constants";
+import { modulesType, permissionsType } from "../constants/types";
 
 @Injectable()
 export class ModuleService {

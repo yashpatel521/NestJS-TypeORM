@@ -4,7 +4,7 @@ import { UserController } from "./user.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { RoleModule } from "../role/role.module";
-import { CommonService } from "src/common/common.service";
+import { CommonService } from "../common/common.service";
 
 @Module({
   controllers: [UserController],

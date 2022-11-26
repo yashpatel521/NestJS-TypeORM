@@ -15,15 +15,21 @@ import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
 import { ModulesModule } from "./module/module.module";
 import { RolesGuard } from "./auth/roles.guard";
+import { MailModule } from "./mail/mail.module";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // no need to import into other modules
+    }),
     TypeOrmModule.forRoot({ ...config, autoLoadEntities: true }),
     CommonModule,
     ModulesModule,
     AuthModule,
     UserModule,
     RoleModule,
+    MailModule,
   ],
   controllers: [],
   providers: [

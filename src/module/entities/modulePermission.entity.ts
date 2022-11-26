@@ -1,4 +1,4 @@
-import { permissionsType } from "../../constants/constants";
+import { permissionsType } from "../../constants/types";
 import {
   Entity,
   Column,

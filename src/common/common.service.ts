@@ -95,7 +95,10 @@ const firebase = isFcmEnable
   : null;
 export class CommonService {
   async sendMessage(body: messaging.MulticastMessage) {
-    const messageTemp = await firebase.messaging().sendMulticast(body);
-    return messageTemp;
+    if (isFcmEnable) {
+      return await firebase.messaging().sendMulticast(body);
+    } else {
+      throw new BadRequestException(message.fcmServiceNotEnabled);
+    }
   }
 }

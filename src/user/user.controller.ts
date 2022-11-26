@@ -12,17 +12,13 @@ import { message } from "../errorLogging/errorMessage";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { userCreate, userList } from "../ApiResponsExample/user";
-import {
-  deleteSuccess,
-  modulesEnum,
-  Public,
-  Roles,
-} from "../constants/constants";
+import { deleteSuccess, Public, Roles } from "../constants/constants";
 import { User } from "./entities/user.entity";
 import * as bcrypt from "bcrypt";
 import { RoleService } from "../role/role.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { modulesEnum } from "../constants/types";
 
 @ApiTags("User")
 @Controller("user")
@@ -36,6 +32,12 @@ export class UserController {
   @Get("fcmTest")
   async getFcmTest() {
     return await this.userService.fmcTokenCheck();
+  }
+
+  @Public()
+  @Get("mailTest")
+  async getMailTest() {
+    return await this.userService.mailCheck();
   }
 
   @Public()
