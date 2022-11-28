@@ -34,14 +34,19 @@ async function bootstrap() {
     prefix: "/public",
   });
 
-  app.use("/loginForm", (req, res) => {
-    res.sendFile(join(__dirname, "../../src/index.html"));
+  // create a firebase token using login form
+  app.use("/firebaseLogin", (_, res) => {
+    res.sendFile(join(__dirname, "../../src/firebaseLogin.html"));
   });
 
-  app.use("/firebase-messaging-sw.js", (req, res) => {
+  app.use("/firebase-messaging-sw.js", (_, res) => {
     res.sendFile(join(__dirname, "../../src/firebase-messaging-sw.js"));
   });
 
+  // Socket test html frontend file
+  app.use("/webSockets", (_, res) => {
+    res.sendFile(join(__dirname, "../../src/webSockets.html"));
+  });
   //Server initialization on PORT
   await app.listen(PORT);
   ForceLog(`CONNECTED TO DB AND SERVER STARTED ON - ${getLocalIpAddress()}`);

@@ -26,6 +26,9 @@ export class User {
   @Column({ nullable: true })
   fcmToken: string;
 
+  @Column({ nullable: true })
+  socketId: string;
+
   @Column({ default: "public/default.png" })
   profile: string;
 

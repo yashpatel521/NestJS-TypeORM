@@ -17,6 +17,7 @@ import { ModulesModule } from "./module/module.module";
 import { RolesGuard } from "./auth/roles.guard";
 import { MailModule } from "./mail/mail.module";
 import { ConfigModule } from "@nestjs/config";
+import { EventsModule } from "./sockets/events.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ConfigModule } from "@nestjs/config";
     UserModule,
     RoleModule,
     MailModule,
+    EventsModule,
   ],
   controllers: [],
   providers: [

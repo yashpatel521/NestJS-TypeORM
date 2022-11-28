@@ -16,7 +16,7 @@
     "install:pm": "npm install pm2 -g && pm2 update",
     "start:pm": "nest build && pm2 start ecosystem.config.json && pm2 monit",
     "stop:pm": "pm2 stop NestJs-TypeORM && pm2 delete NestJs-TypeORM",
-    "start:server":"ngrok http 5000"
+    "start:server": "ngrok http 5000"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
@@ -26,9 +26,11 @@
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-socket.io": "^9.2.0",
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.1.3",
     "@nestjs/typeorm": "^9.0.1",
+    "@nestjs/websockets": "^9.2.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
