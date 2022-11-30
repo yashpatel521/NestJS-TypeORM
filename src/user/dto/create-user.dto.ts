@@ -19,6 +19,8 @@ export class CreateUserDto {
   role: string;
 
   fcmToken?: string;
+
+  socketId?: string;
 }
 
 /**

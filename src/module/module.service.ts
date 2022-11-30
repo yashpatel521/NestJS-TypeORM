@@ -4,7 +4,7 @@ import { DeepPartial, Repository } from "typeorm";
 import { Modules } from "./entities/module.entity";
 import { Permission } from "./entities/modulePermission.entity";
 import { RoleService } from "../role/role.service";
-import { modulesType, permissionsType } from "../constants/types";
+import { modulesType, permissions, permissionsType } from "../constants/types";
 
 @Injectable()
 export class ModuleService {
@@ -18,15 +18,33 @@ export class ModuleService {
     private readonly roleService: RoleService
   ) {}
 
-  async create(module: DeepPartial<Modules>): Promise<Modules> {
-    return await this.moduleRepository.save(module);
+  async create(module: DeepPartial<Modules>): Promise<Modules[] | any> {
+    module.name = module.name.toLocaleLowerCase();
+
+    const roles = await this.roleService.findAll();
+    const modulesTemp = [];
+
+    for await (const role of roles) {
+      const permissionsTemp = [];
+      for await (const permission of permissions) {
+        permissionsTemp.push(
+          await this.createPermission({ name: permission as permissionsType })
+        );
+      }
+      modulesTemp.push({ ...module, role, subPermission: permissionsTemp });
+    }
+
+    return await this.moduleRepository.save(modulesTemp);
   }
 
-  async findByName(name: modulesType): Promise<Modules> {
-    return await this.moduleRepository.findOne({ where: { name } });
+  async findByName(name: string): Promise<Modules> {
+    return await this.moduleRepository
+      .createQueryBuilder("module")
+      .where("LOWER(module.name) = LOWER(:name)", { name })
+      .getOne();
   }
 
-  async findByNameAndRole(name: modulesType, role: number): Promise<Modules> {
+  async findByNameAndRole(name: string, role: number): Promise<Modules> {
     return await this.moduleRepository.findOne({
       where: { name, role: { id: role } },
     });
