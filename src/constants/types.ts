@@ -14,9 +14,9 @@ export enum modulesEnum {
   permission = "permission",
 }
 
-export const permissions = ["post", "get", "patch", "delete"];
-export type permissionsType = "post" | "get" | "patch" | "delete";
-export enum permissionsEnum {
+export const subPermissions = ["post", "get", "patch", "delete"];
+export type subPermissionsType = "post" | "get" | "patch" | "delete";
+export enum subPermissionsEnum {
   post = "post",
   get = "get",
   patch = "patch",

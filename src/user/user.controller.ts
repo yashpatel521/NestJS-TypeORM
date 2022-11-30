@@ -66,7 +66,7 @@ export class UserController {
     },
   })
   @Get()
-  async getAllUsers(): Promise<User[] | User> {
+  async getAllUsers(): Promise<User[]> {
     return await this.userService.findAllUsers();
   }
 
@@ -79,7 +79,7 @@ export class UserController {
   })
   @Roles(modulesEnum.user)
   @Get(":id")
-  async getUserById(@Param("id") id: number): Promise<User[] | User> {
+  async getUserById(@Param("id") id: number): Promise<User> {
     return await this.userService.findById(+id);
   }
 

@@ -11,8 +11,8 @@ import { UserService } from "../user/user.service";
 import {
   modules,
   modulesType,
-  permissions,
-  permissionsType,
+  subPermissions,
+  subPermissionsType,
   roles,
   rolesEnum,
 } from "../constants/types";
@@ -47,34 +47,12 @@ export class CommonController {
   @Get("addDefaultUsers")
   async addDefaultUsers() {
     // Create Roles
-    roles.forEach(async (name: string) => {
+    for await (const name of roles) {
       let role = await this.roleService.findByName(name);
       if (!role) {
         role = await this.roleService.create({ name });
       }
-
-      // Create Modules ar per Role
-      modules.forEach(async (name: modulesType) => {
-        let module = await this.moduleService.findByNameAndRole(name, role.id);
-        if (!module) {
-          module = await this.moduleService.create({
-            name,
-            role,
-          });
-        }
-        // Create Permission ar per Modules
-        permissions.forEach(async (name: permissionsType) => {
-          const permission =
-            await this.moduleService.findPermissionByNameAndModule(
-              name,
-              module.id
-            );
-          if (!permission) {
-            await this.moduleService.createPermission({ name, module });
-          }
-        });
-      });
-    });
+    }
 
     const adminRole = await this.roleService.findByNameOrThrow(rolesEnum.admin);
     let adminUser = {
