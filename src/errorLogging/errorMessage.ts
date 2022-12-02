@@ -8,6 +8,7 @@ export enum message {
   passwordWeak = "Password is too weak",
   inValidCredentail = "Invalid credentials",
   roleNotFound = "Role not found",
+  roleAlreadyExists = "Role Already Exists",
   typeInValid = "Type is invalid",
   moduleNotFound = "Module not found",
   mailServiceNotEnable = "Mail service is not enabled",

@@ -24,15 +24,19 @@ export class UserService {
 
   async create(user: DeepPartial<User>): Promise<User> {
     user.password = bcrypt.hashSync(user.password, 12);
-    return await this.usersRepository.save(user);
+    user.email = user.email.toLocaleLowerCase();
+    return await this.save(user);
   }
 
-  async save(userUpdate: User): Promise<User> {
+  async save(userUpdate: DeepPartial<User>): Promise<User> {
     return await this.usersRepository.save(userUpdate);
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository
+      .createQueryBuilder("user")
+      .where("LOWER(user.email) = LOWER(:email)", { email })
+      .getOne();
   }
 
   async findByEmailOrThrow(email: string): Promise<User> {

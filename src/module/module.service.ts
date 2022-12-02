@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Modules } from "./entities/module.entity";
@@ -19,6 +19,7 @@ export class ModuleService {
     @InjectRepository(SubPermission)
     private subPermissionRepository: Repository<SubPermission>,
 
+    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService
   ) {}
 
@@ -56,10 +57,14 @@ export class ModuleService {
       );
     }
 
-    return this.moduleRepository.save({
+    return this.moduleSave({
       name: module.name,
       permissions: permissionTemp,
     });
+  }
+
+  async moduleSave(modules: DeepPartial<Modules>) {
+    return await this.moduleRepository.save(modules);
   }
 
   async findByName(name: string): Promise<Modules> {

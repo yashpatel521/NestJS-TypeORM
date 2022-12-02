@@ -40,7 +40,6 @@ export class UserController {
     return await this.userService.mailCheck();
   }
 
-  @Public()
   @Roles(modulesEnum.user)
   @Post()
   @ApiResponse({
@@ -115,6 +114,14 @@ export class UserController {
 
     if (userData.fcmToken) {
       user.fcmToken = userData.fcmToken;
+    }
+
+    if (userData.name) {
+      user.name = userData.name;
+    }
+
+    if (userData.socketId) {
+      user.socketId = userData.socketId;
     }
 
     return await this.userService.save(user);

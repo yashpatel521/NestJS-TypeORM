@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  BadRequestException,
 } from "@nestjs/common";
 import { RoleService } from "./role.service";
 import { CreateRoleDto } from "./dto/create-role.dto";
@@ -14,6 +15,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { roleCreate, roleList } from "../ApiResponsExample/role";
 import { deleteSuccess, Roles } from "../constants/constants";
 import { modulesEnum } from "../constants/types";
+import { message } from "src/errorLogging/errorMessage";
 
 @ApiTags("Role")
 @Controller(modulesEnum.role)
@@ -29,8 +31,10 @@ export class RoleController {
   })
   @Roles(modulesEnum.role)
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
+  async create(@Body() roleData: CreateRoleDto) {
+    const roleExists = await this.roleService.findByName(roleData.name);
+    if (roleExists) throw new BadRequestException(message.roleAlreadyExists);
+    return this.roleService.create(roleData);
   }
 
   @Roles(modulesEnum.role)
