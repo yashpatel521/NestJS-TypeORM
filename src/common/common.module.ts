@@ -1,6 +1,6 @@
 import { forwardRef, Global, Module } from "@nestjs/common";
 import { MailModule } from "../mail/mail.module";
-import { ModulesModule } from "../module/module.module";
+import { PemissionModule } from "../permission/permission.module";
 import { RoleModule } from "../role/role.module";
 import { UserModule } from "../user/user.module";
 import { CloudinaryProvider } from "./common.constants";
@@ -11,7 +11,7 @@ import { CommonService } from "./common.service";
 @Module({
   controllers: [CommonController],
   imports: [
-    forwardRef(() => ModulesModule),
+    forwardRef(() => PemissionModule),
     UserModule,
     RoleModule,
     MailModule,

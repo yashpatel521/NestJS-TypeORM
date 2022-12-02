@@ -8,13 +8,13 @@ import { Reflector } from "@nestjs/core";
 import { IS_MODULE_KEY } from "../constants/constants";
 import { modulesType } from "../constants/types";
 import { message } from "../errorLogging/errorMessage";
-import { ModuleService } from "../module/module.service";
+import { PermissionService } from "../permission/permission.service";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private readonly moduleService: ModuleService
+    private readonly moduleService: PermissionService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

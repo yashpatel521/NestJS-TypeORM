@@ -5,12 +5,11 @@ export enum rolesEnum {
   customer = "customer",
 }
 
-export const modules = ["user", "role", "module", "permission"];
-export type modulesType = "user" | "role" | "module" | "permission";
+export const modules = ["user", "role", "permission"];
+export type modulesType = "user" | "role" | "permission";
 export enum modulesEnum {
   user = "user",
   role = "role",
-  module = "module",
   permission = "permission",
 }
 

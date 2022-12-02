@@ -3,34 +3,35 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Role } from "./entities/role.entity";
 import { message } from "../errorLogging/errorMessage";
-import { ModuleService } from "../module/module.service";
-import { subPermissions, subPermissionsType } from "src/constants/types";
+import { PermissionService } from "../permission/permission.service";
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(Role)
     private rolesRepository: Repository<Role>,
-    private readonly moduleService: ModuleService
+    private readonly moduleService: PermissionService
   ) {}
 
   async create(role: DeepPartial<Role>): Promise<Role> {
-    const allmodule = await this.moduleService.findAll();
+    const allPermissionName = await this.moduleService.findAll();
+    const allSubPermissionName =
+      await this.moduleService.findAllSubpermissionName();
     const permissions = [];
 
-    for await (const module of allmodule) {
+    for await (const permissionName of allPermissionName) {
       const subPermissionTemp = [];
-      for await (const constPermission of subPermissions) {
+      for await (const subPermissionName of allSubPermissionName) {
         subPermissionTemp.push(
           await this.moduleService.createSubPermission({
-            name: constPermission as subPermissionsType,
+            subPermissionName,
           })
         );
       }
       permissions.push(
         await this.moduleService.createPermission({
           subPermission: subPermissionTemp,
-          module: module,
+          permissionName,
         })
       );
     }

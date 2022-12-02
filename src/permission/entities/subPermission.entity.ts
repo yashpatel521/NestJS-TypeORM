@@ -1,4 +1,3 @@
-import { subPermissionsType } from "../../constants/types";
 import {
   Entity,
   Column,
@@ -8,15 +7,13 @@ import {
   Unique,
 } from "typeorm";
 import { Permission } from "./permission.entity";
+import { SubPermissionName } from "./subPermissionName.entity";
 
-@Unique(["name", "permission"])
+@Unique(["subPermissionName", "permission"])
 @Entity()
 export class SubPermission {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  name: subPermissionsType;
 
   @Column({ default: true })
   access: boolean;
@@ -25,6 +22,16 @@ export class SubPermission {
     onDelete: "CASCADE",
   })
   permission: Permission;
+
+  @ManyToOne(
+    () => SubPermissionName,
+    (subPermissionName) => subPermissionName.subPermission,
+    {
+      eager: true,
+      onDelete: "CASCADE",
+    }
+  )
+  subPermissionName: SubPermissionName;
 
   @CreateDateColumn()
   createdAt: Date;

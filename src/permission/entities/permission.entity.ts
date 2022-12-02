@@ -1,5 +1,5 @@
 import { Role } from "../../role/entities/role.entity";
-import { Modules } from "./module.entity";
+import { PermissionName } from "./permissionName.entity";
 import {
   Entity,
   Column,
@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { SubPermission } from "./subPermission.entity";
 
-@Unique(["module", "role"])
+@Unique(["permissionName", "role"])
 @Entity()
 export class Permission {
   @PrimaryGeneratedColumn()
@@ -20,11 +20,15 @@ export class Permission {
   @Column({ default: true })
   access: boolean;
 
-  @ManyToOne(() => Modules, (module) => module.permissions, {
-    eager: true,
-    onDelete: "CASCADE",
-  })
-  module: Modules;
+  @ManyToOne(
+    () => PermissionName,
+    (permissionName) => permissionName.permissions,
+    {
+      eager: true,
+      onDelete: "CASCADE",
+    }
+  )
+  permissionName: PermissionName;
 
   @ManyToOne(() => Role, (role) => role.permission, { onDelete: "CASCADE" })
   role: Role;

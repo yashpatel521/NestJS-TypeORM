@@ -13,7 +13,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "./constants/constants";
 import { RoleModule } from "./role/role.module";
 import { CommonModule } from "./common/common.module";
-import { ModulesModule } from "./module/module.module";
+import { PemissionModule } from "./permission/permission.module";
 import { RolesGuard } from "./auth/roles.guard";
 import { MailModule } from "./mail/mail.module";
 import { ConfigModule } from "@nestjs/config";
@@ -26,7 +26,7 @@ import { EventsModule } from "./sockets/events.module";
     }),
     TypeOrmModule.forRoot({ ...config, autoLoadEntities: true }),
     CommonModule,
-    ModulesModule,
+    PemissionModule,
     AuthModule,
     UserModule,
     RoleModule,

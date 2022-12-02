@@ -5,18 +5,21 @@ import {
   CreateDateColumn,
   OneToMany,
 } from "typeorm";
-import { Permission } from "./permission.entity";
+import { SubPermission } from "./subPermission.entity";
 
 @Entity()
-export class Modules {
+export class SubPermissionName {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
   name: string;
 
-  @OneToMany(() => Permission, (permission) => permission.module)
-  permissions: Permission[];
+  @OneToMany(
+    () => SubPermission,
+    (subPermission) => subPermission.subPermissionName
+  )
+  subPermission: SubPermission[];
 
   @CreateDateColumn()
   createdAt: Date;

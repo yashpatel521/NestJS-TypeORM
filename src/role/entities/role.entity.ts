@@ -6,7 +6,7 @@ import {
   OneToMany,
   CreateDateColumn,
 } from "typeorm";
-import { Permission } from "src/module/entities/permission.entity";
+import { Permission } from "src/permission/entities/permission.entity";
 
 @Entity()
 export class Role {
