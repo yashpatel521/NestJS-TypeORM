@@ -29,10 +29,10 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const userRole = request.user.role.name;
     let access = true;
-    access = await this.moduleService.findPermissionByRole(
+    access = await this.moduleService.checkPermissionByRole(
       userRole,
       module,
-      request.method.toLowerCase()
+      request.method
     );
 
     if (!access) {

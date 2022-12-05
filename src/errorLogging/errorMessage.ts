@@ -14,4 +14,6 @@ export enum message {
   mailServiceNotEnable = "Mail service is not enabled",
   fcmServiceNotEnabled = "FCM service is not enabled",
   moduleAlreadyExists = "Module already exists with the name!",
+  permissionNotFound = "Permission not found",
+  subPermissionNotFound = "SubPermission not found",
 }

@@ -48,7 +48,7 @@ export class CommonController {
       const subPermissionNameExists =
         await this.permissionService.findBySubPermissionName(subPermission);
       if (!subPermissionNameExists)
-        await this.permissionService.createSubPermissionName(subPermission);
+        await this.permissionService.subPermissionNameSave(subPermission);
     }
 
     // create deafult modules permission

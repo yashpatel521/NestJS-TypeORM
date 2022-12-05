@@ -10,26 +10,27 @@ export class RoleService {
   constructor(
     @InjectRepository(Role)
     private rolesRepository: Repository<Role>,
-    private readonly moduleService: PermissionService
+    private readonly permissionService: PermissionService
   ) {}
 
   async create(role: DeepPartial<Role>): Promise<Role> {
-    const allPermissionName = await this.moduleService.findAll();
+    const allPermissionName =
+      await this.permissionService.findAllPermissionsName();
     const allSubPermissionName =
-      await this.moduleService.findAllSubpermissionName();
+      await this.permissionService.findAllSubpermissionName();
     const permissions = [];
 
     for await (const permissionName of allPermissionName) {
       const subPermissionTemp = [];
       for await (const subPermissionName of allSubPermissionName) {
         subPermissionTemp.push(
-          await this.moduleService.createSubPermission({
+          await this.permissionService.subPermissionSave({
             subPermissionName,
           })
         );
       }
       permissions.push(
-        await this.moduleService.createPermission({
+        await this.permissionService.permissionSave({
           subPermission: subPermissionTemp,
           permissionName,
         })

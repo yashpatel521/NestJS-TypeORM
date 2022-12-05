@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { RoleService } from "../role/role.service";
@@ -6,12 +11,13 @@ import { Permission } from "./entities/permission.entity";
 import { SubPermission } from "./entities/subPermission.entity";
 import { PermissionName } from "./entities/permissionName.entity";
 import { SubPermissionName } from "./entities/subPermissionName.entity";
+import { message } from "src/errorLogging/errorMessage";
 
 @Injectable()
 export class PermissionService {
   constructor(
     @InjectRepository(PermissionName)
-    private moduleRepository: Repository<PermissionName>,
+    private permissionNameRepository: Repository<PermissionName>,
 
     @InjectRepository(Permission)
     private permissionRepository: Repository<Permission>,
@@ -26,33 +32,24 @@ export class PermissionService {
     private readonly roleService: RoleService
   ) {}
 
-  async findAll(): Promise<PermissionName[]> {
-    return await this.moduleRepository.find();
+  async permissionNameSave(modules: DeepPartial<PermissionName>) {
+    return await this.permissionNameRepository.save(modules);
   }
 
-  async createSubPermissionName(name: string): Promise<SubPermissionName> {
+  async subPermissionNameSave(name: string): Promise<SubPermissionName> {
     return await this.subPermissionNameRepository.save({ name });
   }
 
-  async findAllSubpermissionName(): Promise<SubPermissionName[]> {
-    return await this.subPermissionNameRepository.find();
+  async permissionSave(
+    permission: DeepPartial<Permission>
+  ): Promise<Permission> {
+    return await this.permissionRepository.save(permission);
   }
 
-  async findBySubPermissionName(name: string): Promise<SubPermissionName> {
-    return await this.subPermissionNameRepository
-      .createQueryBuilder("subPermissionName")
-      .where("LOWER(subPermissionName.name) = LOWER(:name)", { name })
-      .getOne();
-  }
-
-  async findById(moduleId: number): Promise<PermissionName[]> {
-    return await this.moduleRepository
-      .createQueryBuilder("module")
-      .leftJoinAndSelect("module.permissions", "permissions")
-      .leftJoinAndSelect("permissions.role", "role")
-      .leftJoinAndSelect("permissions.subPermission", "subpermissions")
-      .where("module.id =:moduleId", { moduleId })
-      .getMany();
+  async subPermissionSave(
+    subPermission: DeepPartial<SubPermission>
+  ): Promise<SubPermission> {
+    return await this.subPermissionRepository.save(subPermission);
   }
 
   async createPermissionName(
@@ -67,55 +64,110 @@ export class PermissionService {
       const subPermissionTemp = [];
       for await (const subPermission of subPermissions) {
         subPermissionTemp.push(
-          await this.createSubPermission({
+          await this.subPermissionSave({
             subPermissionName: subPermission,
           })
         );
       }
 
       permissionTemp.push(
-        await this.createPermission({ subPermission: subPermissionTemp, role })
+        await this.permissionSave({ subPermission: subPermissionTemp, role })
       );
     }
 
-    return this.moduleSave({
+    return this.permissionNameSave({
       name: permissionName.name,
       permissions: permissionTemp,
     });
   }
 
-  async moduleSave(modules: DeepPartial<PermissionName>) {
-    return await this.moduleRepository.save(modules);
+  async findAllPermissionsName(): Promise<PermissionName[]> {
+    return await this.permissionNameRepository
+      .createQueryBuilder("permission")
+      .leftJoinAndSelect("permission.permissions", "permissions")
+      .leftJoinAndSelect("permissions.role", "role")
+      .leftJoinAndSelect("permissions.subPermission", "subpermissions")
+      .getMany();
+  }
+
+  async findPermissionNameById(permissionId: number): Promise<PermissionName> {
+    return await this.permissionNameRepository
+      .createQueryBuilder("permission")
+      .leftJoinAndSelect("permission.permissions", "permissions")
+      .leftJoinAndSelect("permissions.role", "role")
+      .leftJoinAndSelect("permissions.subPermission", "subpermissions")
+      .where("permission.id =:permissionId", { permissionId })
+      .getOne();
+  }
+
+  async findPermissionNameByIdOrThrow(
+    permissionId: number
+  ): Promise<PermissionName> {
+    const permission = await this.findPermissionNameById(permissionId);
+    if (!permission) {
+      throw new BadRequestException(message.permissionNotFound);
+    }
+    return permission;
   }
 
   async findByPermissionName(name: string): Promise<PermissionName> {
-    return await this.moduleRepository
+    return await this.permissionNameRepository
       .createQueryBuilder("module")
       .where("LOWER(module.name) = LOWER(:name)", { name })
       .getOne();
   }
 
-  async createPermission(
-    permission: DeepPartial<Permission>
-  ): Promise<Permission> {
-    return await this.permissionRepository.save(permission);
+  async findAllSubpermissionName(): Promise<SubPermissionName[]> {
+    return await this.subPermissionNameRepository
+      .createQueryBuilder("subPermissionName")
+      .leftJoinAndSelect("subPermissionName.subPermission", "subPermission")
+      .leftJoinAndSelect("subPermission.permission", "permission")
+      .leftJoinAndSelect("permission.role", "role")
+      .leftJoinAndSelect("permission.permissionName", "permissionName")
+      .getMany();
   }
 
-  async createSubPermission(
-    subPermission: DeepPartial<SubPermission>
-  ): Promise<SubPermission> {
-    return await this.subPermissionRepository.save(subPermission);
+  async findBySubPermissionName(name: string): Promise<SubPermissionName> {
+    return await this.subPermissionNameRepository
+      .createQueryBuilder("subPermissionName")
+      .where("LOWER(subPermissionName.name) = LOWER(:name)", { name })
+      .getOne();
   }
 
-  async findByNameAndRole(
-    moduleName: string,
+  async findSubPermissionNameById(
+    subPermissionId: number
+  ): Promise<SubPermissionName> {
+    return await this.subPermissionNameRepository
+      .createQueryBuilder("subPermissionName")
+      .leftJoinAndSelect("subPermissionName.subPermission", "subPermission")
+      .leftJoinAndSelect("subPermission.permission", "permission")
+      .leftJoinAndSelect("permission.role", "role")
+      .leftJoinAndSelect("permission.permissionName", "permissionName")
+      .where("subPermissionName.id = :subPermissionId", { subPermissionId })
+      .getOne();
+  }
+
+  async findSubPermissionNameByIdOrThrow(
+    subPermissionId: number
+  ): Promise<SubPermissionName> {
+    const permission = await this.findSubPermissionNameById(subPermissionId);
+    if (!permission) {
+      throw new BadRequestException(message.subPermissionNotFound);
+    }
+    return permission;
+  }
+
+  async findPermissionNameByAndRole(
+    permissionName: string,
     roleId: number
   ): Promise<Permission> {
     return this.permissionRepository
       .createQueryBuilder("permission")
       .leftJoin("permission.permissionName", "permissionName")
       .leftJoin("permission.role", "role")
-      .where("permissionName.name =:moduleName", { moduleName })
+      .where("LOWER(permissionName.name) = LOWER(:permissionName)", {
+        permissionName,
+      })
       .andWhere("role.id =:roleId", { roleId })
       .getOne();
   }
@@ -128,21 +180,24 @@ export class PermissionService {
       .createQueryBuilder("subPermission")
       .leftJoin("subPermission.permission", "permission")
       .leftJoin("subPermission.subPermissionName", "subPermissionName")
-      .where("subPermissionName.name =:subPermissionName", {
+      .where("LOWER(subPermissionName.name) = LOWER(:subPermissionName)", {
         subPermissionName,
       })
       .andWhere("permission.id =:permissionId", { permissionId })
       .getOne();
   }
 
-  async findPermissionByRole(
+  async checkPermissionByRole(
     role: string,
     module: string,
     subPermission: string
   ) {
     let defaultPermission = false;
     const roleData = await this.roleService.findByNameOrThrow(role);
-    const permissionData = await this.findByNameAndRole(module, roleData.id);
+    const permissionData = await this.findPermissionNameByAndRole(
+      module,
+      roleData.id
+    );
 
     if (permissionData && permissionData.access) {
       const subPermissionData = await this.findSubPermissionByNameAndPermission(
@@ -155,5 +210,22 @@ export class PermissionService {
     }
 
     return defaultPermission;
+  }
+
+  async findPermissionByIdOrThorw(permissionId: number) {
+    const permission = await this.permissionRepository.findOneBy({
+      id: permissionId,
+    });
+    if (!permission) {
+      throw new BadRequestException(message.permissionNotFound);
+    }
+    return permission;
+  }
+
+  async updatePermission(permissionId: number, access: boolean) {
+    const permission = await this.findPermissionByIdOrThorw(permissionId);
+    permission.access = access;
+    await this.permissionSave(permission);
+    return permission;
   }
 }
