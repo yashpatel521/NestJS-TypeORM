@@ -13,6 +13,7 @@ export class MailService {
   async sendUserConfirmation(user: User, mailContextType: mailContextType) {
     if (isMailEnable) {
       return await this.mailerService.sendMail({
+       // to: 'group4559@gmail.com',
         to: user.email,
         subject: mailContextType.subject,
         template: join(
