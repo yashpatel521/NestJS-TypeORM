@@ -69,7 +69,7 @@ export class ErrorsInterceptor implements NestInterceptor {
             new HttpException(
               {
                 statusCode: 400,
-                succuss: false,
+                success: false,
                 message,
               },
               200
@@ -90,6 +90,6 @@ export class TransformInterceptor<T>
   ): Observable<Response<T>> {
     return next
       .handle()
-      .pipe(map((data) => ({ statusCode: 200, succuss: true, data })));
+      .pipe(map((data) => ({ statusCode: 200, success: true, data })));
   }
 }

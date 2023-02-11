@@ -8,13 +8,13 @@ import { Reflector } from "@nestjs/core";
 import { IS_MODULE_KEY } from "../constants/constants";
 import { modulesType } from "../constants/types";
 import { message } from "../errorLogging/errorMessage";
-import { ModuleService } from "../module/module.service";
+import { PermissionService } from "../permission/permission.service";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private readonly moduleService: ModuleService
+    private readonly moduleService: PermissionService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,10 +29,10 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const userRole = request.user.role.name;
     let access = true;
-    access = await this.moduleService.findPermissionByRole(
+    access = await this.moduleService.checkPermissionByRole(
       userRole,
       module,
-      request.method.toLowerCase()
+      request.method
     );
 
     if (!access) {

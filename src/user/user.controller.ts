@@ -40,7 +40,6 @@ export class UserController {
     return await this.userService.mailCheck();
   }
 
-  @Public()
   @Roles(modulesEnum.user)
   @Post()
   @ApiResponse({
@@ -66,7 +65,7 @@ export class UserController {
     },
   })
   @Get()
-  async getAllUsers(): Promise<User[] | User> {
+  async getAllUsers(): Promise<User[]> {
     return await this.userService.findAllUsers();
   }
 
@@ -79,7 +78,7 @@ export class UserController {
   })
   @Roles(modulesEnum.user)
   @Get(":id")
-  async getUserById(@Param("id") id: number): Promise<User[] | User> {
+  async getUserById(@Param("id") id: number): Promise<User> {
     return await this.userService.findById(+id);
   }
 
@@ -115,6 +114,14 @@ export class UserController {
 
     if (userData.fcmToken) {
       user.fcmToken = userData.fcmToken;
+    }
+
+    if (userData.name) {
+      user.name = userData.name;
+    }
+
+    if (userData.socketId) {
+      user.socketId = userData.socketId;
     }
 
     return await this.userService.save(user);

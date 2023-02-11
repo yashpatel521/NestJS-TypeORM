@@ -11,8 +11,7 @@ import { UserService } from "../user/user.service";
 import {
   modules,
   modulesType,
-  permissions,
-  permissionsType,
+  subPermissions,
   roles,
   rolesEnum,
 } from "../constants/types";
@@ -20,9 +19,8 @@ import { SERVER_URL, Public } from "../constants/constants";
 import { fileUploadServer } from "./common.constants";
 import { fileUploadDto } from "./dto/common.dto";
 import { RoleService } from "../role/role.service";
-import { ModuleService } from "../module/module.service";
+import { PermissionService } from "../permission/permission.service";
 import { MyNewFileInterceptor } from "./common.service";
-import { MailService } from "../mail/mail.service";
 
 @ApiTags("Common")
 @Controller()
@@ -30,8 +28,7 @@ export class CommonController {
   constructor(
     private readonly userService: UserService,
     private readonly roleService: RoleService,
-    private readonly moduleService: ModuleService,
-    private mailService: MailService
+    private readonly permissionService: PermissionService
   ) {}
 
   @Public()
@@ -46,35 +43,31 @@ export class CommonController {
   @Public()
   @Get("addDefaultUsers")
   async addDefaultUsers() {
+    // create deafult subPermissions
+    for await (const subPermission of subPermissions) {
+      const subPermissionNameExists =
+        await this.permissionService.findBySubPermissionName(subPermission);
+      if (!subPermissionNameExists)
+        await this.permissionService.subPermissionNameSave(subPermission);
+    }
+
+    // create deafult modules permission
+    for await (const permissionName of modules) {
+      const permissionNameExists =
+        await this.permissionService.findByPermissionName(permissionName);
+      if (!permissionNameExists)
+        await this.permissionService.createPermissionName({
+          name: permissionName,
+        });
+    }
+
     // Create Roles
-    roles.forEach(async (name: string) => {
+    for await (const name of roles) {
       let role = await this.roleService.findByName(name);
       if (!role) {
         role = await this.roleService.create({ name });
       }
-
-      // Create Modules ar per Role
-      modules.forEach(async (name: modulesType) => {
-        let module = await this.moduleService.findByNameAndRole(name, role.id);
-        if (!module) {
-          module = await this.moduleService.create({
-            name,
-            role,
-          });
-        }
-        // Create Permission ar per Modules
-        permissions.forEach(async (name: permissionsType) => {
-          const permission =
-            await this.moduleService.findPermissionByNameAndModule(
-              name,
-              module.id
-            );
-          if (!permission) {
-            await this.moduleService.createPermission({ name, module });
-          }
-        });
-      });
-    });
+    }
 
     const adminRole = await this.roleService.findByNameOrThrow(rolesEnum.admin);
     let adminUser = {

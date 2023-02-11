@@ -3,16 +3,44 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Role } from "./entities/role.entity";
 import { message } from "../errorLogging/errorMessage";
+import { PermissionService } from "../permission/permission.service";
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(Role)
-    private rolesRepository: Repository<Role>
+    private rolesRepository: Repository<Role>,
+    private readonly permissionService: PermissionService
   ) {}
 
   async create(role: DeepPartial<Role>): Promise<Role> {
-    return await this.rolesRepository.save(role);
+    const allPermissionName =
+      await this.permissionService.findAllPermissionsName();
+    const allSubPermissionName =
+      await this.permissionService.findAllSubpermissionName();
+    const permissions = [];
+
+    for await (const permissionName of allPermissionName) {
+      const subPermissionTemp = [];
+      for await (const subPermissionName of allSubPermissionName) {
+        subPermissionTemp.push(
+          await this.permissionService.subPermissionSave({
+            subPermissionName,
+          })
+        );
+      }
+      permissions.push(
+        await this.permissionService.permissionSave({
+          subPermission: subPermissionTemp,
+          permissionName,
+        })
+      );
+    }
+
+    return await this.save({
+      name: role.name,
+      permission: permissions,
+    });
   }
 
   async findAll(): Promise<Role[]> {
@@ -29,12 +57,16 @@ export class RoleService {
     return role;
   }
 
-  async save(role: Role): Promise<Role> {
+  async save(role: DeepPartial<Role>): Promise<Role> {
+    role.name = role.name.toLocaleLowerCase();
     return await this.rolesRepository.save(role);
   }
 
   async findByName(name: string): Promise<Role> {
-    return await this.rolesRepository.findOne({ where: { name } });
+    return await this.rolesRepository
+      .createQueryBuilder("role")
+      .where("LOWER(role.name) = LOWER(:name)", { name })
+      .getOne();
   }
 
   async findByNameOrThrow(name: string): Promise<Role> {
