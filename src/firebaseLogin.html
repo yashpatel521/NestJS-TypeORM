@@ -26,33 +26,26 @@
     onMessage,
   } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-messaging.js";
 
-  // const app = initializeApp({
-  //   apiKey: "",
-  //   authDomain: "",
-  //   projectId: "",
-  //   storageBucket: "",
-  //   messagingSenderId: "",
-  //   appId: "",
-  //   measurementId: "",
-  // });
   const app = initializeApp({
-    apiKey: "AIzaSyBW-KNGRH6qRmghU3bN62V2GM-yiz42hhY",
-    authDomain: "trans-name-252111.firebaseapp.com",
-    projectId: "trans-name-252111",
-    storageBucket: "trans-name-252111.appspot.com",
-    messagingSenderId: "210626357606",
-    appId: "1:210626357606:web:857651622094799aa640a7",
-    measurementId: "G-NTK8B6EWXW"
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: "",
   });
   const analytics = getAnalytics(app);
   const messaging = getMessaging();
 
   $(document).ready(function () {
     $("#submit").click(function (e) {
+
+      const SERVER_URL = 'https://localhost:5000/';
       e.preventDefault();
       jQuery.ajax({
         type: "POST",
-        url: "https://1d8c-74-57-144-54.ngrok.io/login",
+        url: SERVER_URL + "login",
         data: {
           email: $("#email").val(),
           password: $("#password").val(),
@@ -62,14 +55,14 @@
           if (data.success) {
             const user = data.data;
             getToken(messaging, {
-              vapidKey: "BI-lDPHE94oIAHyslMANcdgG3PAQ2mHJnF-gnsOhYiykH67Suf3BGtnjpP-1utT8wiU7_2UMab2D6hFc7weTj2s",
+              vapidKey: "",
             })
               .then((currentToken) => {
                 if (currentToken) {
                   console.log(currentToken);
                   jQuery.ajax({
                     type: "PATCH",
-                    url: "https://1d8c-74-57-144-54.ngrok.io/user/" + user.id,
+                    url: SERVER_URL + "user/" + user.id,
                     data: {
                       fcmToken: currentToken,
                     },
