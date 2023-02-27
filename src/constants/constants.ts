@@ -143,4 +143,8 @@ export const getLocalIpAddress = () => {
 };
 
 export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
-export const SERVER_URL = `${getLocalIpAddress()}/`;
+
+export const SERVER_URL =
+  ENV.SERVER_URL == "LOCAL"
+    ? `http://localhost:${PORT}/`
+    : `${getLocalIpAddress()}/`;
