@@ -75,6 +75,15 @@ if (ENV.USE_DB === "LOCAL") {
     password: ENV.LOCAL_DB_PASSWORD,
     database: ENV.LOCAL_DB_NAME,
   };
+} else if (ENV.USE_DB === "REMOTE") {
+  configDB = {
+    type: ENV.REMOTE_DB_TYPE,
+    host: ENV.REMOTE_DB_HOST,
+    port: ENV.REMOTE_DB_PORT,
+    username: ENV.REMOTE_DB_USERNAME,
+    password: ENV.REMOTE_DB_PASSWORD,
+    database: ENV.REMOTE_DB_NAME,
+  };
 }
 
 type dbType = "mysql" | "postgres";
