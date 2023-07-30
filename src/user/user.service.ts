@@ -84,7 +84,7 @@ export class UserService {
     const user = await this.usersRepository
       .createQueryBuilder("user")
       .leftJoin("user.role", "role")
-      .where("role.name = :role", { role: rolesEnum.customer })
+      .where("role.name = :role", { role: rolesEnum.user })
       .getOne();
 
     const context: mailContextType = {

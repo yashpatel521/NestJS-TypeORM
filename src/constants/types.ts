@@ -1,8 +1,8 @@
-export const roles = ["admin", "customer"];
-export type rolesType = "admin" | "customer";
+export const roles = ["admin", "user"];
+export type rolesType = "admin" | "user";
 export enum rolesEnum {
   admin = "admin",
-  customer = "customer",
+  user = "user",
 }
 
 export const modules = ["user", "role", "permission"];

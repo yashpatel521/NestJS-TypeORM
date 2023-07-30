@@ -76,14 +76,12 @@ export class CommonController {
       password: "Admin@1234",
       role: adminRole,
     };
-    const customerRole = await this.roleService.findByNameOrThrow(
-      rolesEnum.customer
-    );
-    let customerUser = {
-      name: "Customer",
-      email: "customer@customer.com",
-      password: "Customer@1234",
-      role: customerRole,
+    const userRole = await this.roleService.findByNameOrThrow(rolesEnum.user);
+    let userUser = {
+      name: "User",
+      email: "user@user.com",
+      password: "User@1234",
+      role: userRole,
     };
 
     let admin = await this.userService.findByEmail(adminUser.email);
@@ -91,12 +89,12 @@ export class CommonController {
       admin = await this.userService.create(adminUser);
     }
 
-    let customer = await this.userService.findByEmail(customerUser.email);
-    if (!customer) {
-      customer = await this.userService.create(customerUser);
+    let user = await this.userService.findByEmail(userUser.email);
+    if (!user) {
+      user = await this.userService.create(userUser);
     }
 
-    return { admin, customer };
+    return { admin, user };
   }
 
   @Public()
