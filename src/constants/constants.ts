@@ -9,6 +9,7 @@ export const PORT = ENV.PORT || 5001;
 
 export const isFcmEnable = ENV.FCM === "true" ? true : false;
 export const isMailEnable = ENV.MAIL === "true" ? true : false;
+export const dataPerPage = +ENV.DATA_PER_PAGE || 10;
 
 export const mailConfig = {
   host: ENV.MAIL_HOST,
@@ -153,7 +154,9 @@ export const getLocalIpAddress = () => {
 
 export const DATABSE_URL = `${configDB.type}://${configDB.username}:${configDB.password}@${configDB.host}:${configDB.port}/${configDB.database}`;
 
-export const SERVER_URL =
-  ENV.SERVER_URL == "LOCAL"
-    ? `http://localhost:${PORT}/`
-    : `${getLocalIpAddress()}/`;
+// export const SERVER_URL =
+//   ENV.SERVER_URL == "LOCAL"
+//     ? `http://localhost:${PORT}/`
+//     : `${getLocalIpAddress()}/`;
+
+export const SERVER_URL = `http://localhost:${PORT}/`;

@@ -7,6 +7,7 @@ import {
   Body,
   Patch,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { message } from "../errorLogging/errorMessage";
 import { UserService } from "./user.service";
@@ -65,8 +66,12 @@ export class UserController {
     },
   })
   @Get()
-  async getAllUsers(): Promise<User[]> {
-    return await this.userService.findAllUsers();
+  async getAllUsers(
+    @Query() query
+  ): Promise<{ allUser: User[]; count: number }> {
+    const { allUser, allUserCount: count } =
+      await this.userService.findAllUsers(query.search, +query.page || 1);
+    return { allUser, count };
   }
 
   @ApiBearerAuth()

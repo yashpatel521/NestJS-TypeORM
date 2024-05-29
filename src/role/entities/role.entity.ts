@@ -19,7 +19,9 @@ export class Role {
   @OneToMany(() => User, (user) => user.role)
   users: User[];
 
-  @OneToMany(() => Permission, (permission) => permission.role)
+  @OneToMany(() => Permission, (permission) => permission.role, {
+    onDelete: "CASCADE",
+  })
   permission: Permission[];
 
   @CreateDateColumn()

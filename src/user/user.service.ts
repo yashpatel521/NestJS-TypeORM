@@ -6,7 +6,7 @@ import { User } from "./entities/user.entity";
 import { message } from "../errorLogging/errorMessage";
 import { CommonService } from "../common/common.service";
 import { MailService } from "../mail/mail.service";
-import { SERVER_URL } from "../constants/constants";
+import { SERVER_URL, dataPerPage } from "../constants/constants";
 import { mailContextType, rolesEnum } from "../constants/types";
 
 @Injectable()
@@ -18,8 +18,23 @@ export class UserService {
     private mailService: MailService
   ) {}
 
-  async findAllUsers(): Promise<User[]> {
-    return await this.usersRepository.find();
+  async findAllUsers(
+    search: string,
+    pageNo: number
+  ): Promise<{ allUser: User[]; allUserCount: number }> {
+    const allUserCount = await this.usersRepository.count();
+    const emailLower = search.toLocaleLowerCase();
+    const allUser: User[] = await this.usersRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.role", "role")
+      .where("LOWER(user.email) like :email", {
+        email: `%${emailLower}%`,
+      })
+      .take(dataPerPage)
+      .skip(dataPerPage * (pageNo - 1))
+      .getMany();
+
+    return { allUser, allUserCount };
   }
 
   async create(user: DeepPartial<User>): Promise<User> {
@@ -35,6 +50,7 @@ export class UserService {
   async findByEmail(email: string): Promise<User> {
     return await this.usersRepository
       .createQueryBuilder("user")
+      .leftJoinAndSelect("user.role", "role")
       .where("LOWER(user.email) = LOWER(:email)", { email })
       .getOne();
   }

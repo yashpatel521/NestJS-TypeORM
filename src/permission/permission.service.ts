@@ -87,6 +87,13 @@ export class PermissionService {
       .leftJoinAndSelect("permission.permissions", "permissions")
       .leftJoinAndSelect("permissions.role", "role")
       .leftJoinAndSelect("permissions.subPermission", "subpermissions")
+      .leftJoinAndSelect(
+        "subpermissions.subPermissionName",
+        "subPermissionName"
+      )
+      .orderBy("permission.id")
+      .addOrderBy("permissions.id")
+      .addOrderBy("subPermissionName.name")
       .getMany();
   }
 
